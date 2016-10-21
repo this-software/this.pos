@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration package="dis.software.pos" status="WARN">
+    <Properties>
+        <Property name="filename-pos-all">logs/this-pos-all.log</Property>
+        <Property name="filename-pos-info">logs/this-pos-info.log</Property>
+        <Property name="filename-pos-error">logs/this-pos-err.log</Property>
+        <Property name="filename-pos-hibernate">logs/this-pos-hibernate.log</Property>
+    </Properties>
+	
+    <Appenders>
+        <!-- the standard-console-appender -->
+        <Console name="app-console" target="SYSTEM_OUT">
+            <patternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level (%F:%L) - %msg%n"/>
+        </Console>
+        <!-- the appenders -->
+        <File name="app-pos-all" fileName="${filename-pos-all}" append="true">
+            <patternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level (%F:%L) - %msg%n" />
+        </File>
+        <File name="app-pos-info" fileName="${filename-pos-info}" append="true">
+            <patternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level (%F:%L) - %msg%n" />
+        </File>
+        <File name="app-pos-error" fileName="${filename-pos-error}" append="true">
+            <patternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level (%F:%L) - %msg%n" />
+        </File>
+        <File name="app-pos-hibernate" fileName="${filename-pos-hibernate}" append="true">
+            <patternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level (%F:%L) - %msg%n" />
+        </File>
+    </Appenders>
+	
+    <Loggers>
+        <Logger name="org.hibernate" additivity="false" />
+        <Logger name="org.hibernate.SQL" level="ALL">
+            <AppenderRef ref="app-pos-hibernate" />
+        </Logger>
+        <Logger name="org.hibernate.type" level="TRACE">
+            <AppenderRef ref="app-pos-hibernate" />
+        </Logger>
+        <Root level="ALL">
+            <AppenderRef ref="app-console" />
+            <AppenderRef ref="app-pos-all" level="ALL" />
+            <AppenderRef ref="app-pos-info" level="INFO" />
+            <AppenderRef ref="app-pos-error" level="ERROR" />
+        </Root>
+    </Loggers>
+</Configuration>
