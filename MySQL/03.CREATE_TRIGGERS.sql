@@ -205,6 +205,45 @@ END; //
 DELIMITER ;
 
 
+DROP TRIGGER IF EXISTS `p_update_units_in_stock`;
+DELIMITER //
+-- TRIGGER QUE SE ENCARGA DE ACTUALIZAR LAS UNIDADES EXISTENTES DE UN PRODUCTO
+-- CUANDO SE GENERA UNA "CANCELACIÓN" DE UNA COMPRA
+CREATE TRIGGER p_update_units_in_stock
+AFTER UPDATE ON `purchase` FOR EACH ROW
+BEGIN
+	DECLARE f INT DEFAULT FALSE;
+    DECLARE product_id INT;
+    DECLARE units INT;
+    DECLARE quantity_by_unit INT;
+    DECLARE purchase_details CURSOR FOR
+		-- SE OBTIENEN LOS DETALLES DEL REGISTRO DE COMPRA
+		SELECT `pd`.`product_id`, `pd`.`quantity`, `pu`.`quantity_by_unit`
+        FROM `purchase_detail` `pd`
+        JOIN `product_unit` `pu` ON `pd`.`product_id` = `pu`.`product_id` AND `pd`.`unit_id` = `pu`.`unit_id`
+        WHERE `pd`.`purchase_id` = NEW.`id` AND NEW.`deleted` = 1;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET f = TRUE;
+    
+    OPEN purchase_details;
+    PURCHASE_DETAILS_LOOP: LOOP
+		-- SIGUIENTE RESULTADO
+		FETCH purchase_details INTO product_id, units, quantity_by_unit;
+        -- ¿YA NO EXISTEN RESULTADOS?
+        IF f = TRUE THEN
+			LEAVE PURCHASE_DETAILS_LOOP;
+		END IF;
+		-- SE RESTAN LAS UNIDADES COMPRADAS DE LAS EXISTENTES
+		UPDATE `product` `p`
+		SET `p`.`units_in_stock` = (`p`.`units_in_stock` - (units * quantity_by_unit))
+		WHERE `p`.`id` = product_id;
+        -- SI EXISTE UNA SOLICITUD PENDIENTE SE ELIMINA
+    END LOOP PURCHASE_DETAILS_LOOP;
+    CLOSE purchase_details;
+    
+END; //
+DELIMITER ;
+
+
 DROP TRIGGER IF EXISTS `pd_update_units_in_stock`;
 DELIMITER //
 -- TRIGGER QUE SE ENCARGA DE ACTUALIZAR LAS UNIDADES EXISTENTES DE UN PRODUCTO

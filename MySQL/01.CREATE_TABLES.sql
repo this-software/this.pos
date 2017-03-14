@@ -173,14 +173,13 @@ CREATE TABLE `product` (
 	`description` VARCHAR(100) NULL,
     `cost` DOUBLE(8,2) NOT NULL,
     `price` DOUBLE(8,2) NOT NULL,
-    `special_price` DOUBLE(8,2) NOT NULL DEFAULT 0,
+    `out_of_time_price` DOUBLE(8,2) NOT NULL DEFAULT 0,
     `discount` DOUBLE(8,2) NOT NULL DEFAULT 0,
     `quantity_by_unit` INT NOT NULL, -- CANTIDAD POR UNIDAD PREDETERMINADA EN LA QUE SE VENDE EL PRODUCTO
     `units_in_stock` INT NOT NULL, -- CANTIDAD DE PIEZAS
     `min_stock_level` INT NOT NULL DEFAULT 0, -- MINIMO DE PIEZAS PERMITIDAS
+    `min_stock_level_notified` BIT NOT NULL DEFAULT 0, -- MINIMO DE PIEZAS PERMITIDAS ¿NOTIFICADO?
     `image_path` VARCHAR(250) NULL,
-    `required` BIT DEFAULT 0, -- ¿ES SOLICITADO? (DETERMINADO POR EL INVENTARIO GENERADO POR "SISTEMA")
-    `required_units` INT DEFAULT 0, -- CANTIDAD SOLICITADA (DETERMINADO POR EL INVENTARIO GENERADO POR "SISTEMA")
 	`deleted` BIT DEFAULT 0,
 	`created_by` INT NOT NULL,
 	`created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -197,16 +196,19 @@ CREATE TABLE `product` (
 );
 
 
--- SOLICITUD DE PRODUCTO
+-- SOLICITUD DE PRODUCTO 
 CREATE TABLE `product_request` (
-	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `product_id` INT NOT NULL, -- PRODUCTO
     `unit_id` INT NOT NULL, -- UNIDAD
-    `required_units` INT DEFAULT 0, -- CANTIDAD SOLICITADA
+    `required_units` INT DEFAULT 0, -- UNIDADES SOLICITADAS
     `created_by` INT NOT NULL,
 	`created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`updated_by` INT NULL,
-	`updated_date` DATETIME NULL
+	`updated_date` DATETIME NULL,
+    CONSTRAINT fk_pr_pid_product_id FOREIGN KEY (`product_id`) REFERENCES `product`(`id`),
+    CONSTRAINT fk_pr_uid_unit_id FOREIGN KEY (`unit_id`) REFERENCES `unit`(`id`),
+    CONSTRAINT fk_pr_cby_user_id FOREIGN KEY (`created_by`) REFERENCES `user`(`id`),
+    CONSTRAINT fk_pr_uby_user_id FOREIGN KEY (`updated_by`) REFERENCES `user`(`id`)
 );
 
 
@@ -225,15 +227,34 @@ CREATE TABLE `inventory` (
 
 
 CREATE TABLE `inventory_product` (
-    `inventory_id` INT NOT NULL,
+    `inventory_id` INT NOT NULL, -- INVENTARIO
     `product_id` INT NOT NULL, -- PRODUCTO
     `unit_id` INT NOT NULL, -- UNIDAD
-    `units` INT NOT NULL, -- UNIDADES EN ALMACÉN, UNIDADES DE ENTRADA, UNIDADES DE SALIDA (SEGÚN SEA EL CASO)
+    `status` INT NOT NULL DEFAULT 1, -- INACTIVO, ACTIVO, CANCELADO, BLOQUEADO
+    `units` INT NOT NULL, -- UNIDADES EN ALMACÉN (SISTEMA), UNIDADES DE ENTRADA, UNIDADES DE SALIDA (SEGÚN SEA EL CASO)
     `real_units` INT NULL DEFAULT 0, -- UNIDADES REALES EN ALMACÉN
-	CONSTRAINT pk_ip_iid_pid PRIMARY KEY (`inventory_id`, `product_id`),
+	CONSTRAINT pk_ip_iid_pid_uid PRIMARY KEY (`inventory_id`, `product_id`, `unit_id`),
     CONSTRAINT fk_ip_iid_inventory_id FOREIGN KEY (`inventory_id`) REFERENCES `inventory`(`id`),
     CONSTRAINT fk_ip_pid_product_id FOREIGN KEY (`product_id`) REFERENCES `product`(`id`),
     CONSTRAINT fk_ip_uid_unit_id FOREIGN KEY (`unit_id`) REFERENCES `unit`(`id`)
+);
+
+
+-- SOLICITUD DE PRODUCTO AL REALIZAR EL COTEJO DE INVENTARIO
+CREATE TABLE `inventory_product_request` (
+    `inventory_id` INT NOT NULL, -- INVENTARIO
+    `product_id` INT NOT NULL, -- PRODUCTO
+    `unit_id` INT NOT NULL, -- UNIDAD
+    `required_units` INT DEFAULT 0, -- UNIDADES SOLICITADAS
+    `created_by` INT NOT NULL,
+	`created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`updated_by` INT NULL,
+	`updated_date` DATETIME NULL,
+    CONSTRAINT fk_ipr_iid_inventory_id FOREIGN KEY (`inventory_id`) REFERENCES `inventory`(`id`),
+    CONSTRAINT fk_ipr_pid_product_id FOREIGN KEY (`product_id`) REFERENCES `product`(`id`),
+    CONSTRAINT fk_ipr_uid_unit_id FOREIGN KEY (`unit_id`) REFERENCES `unit`(`id`),
+    CONSTRAINT fk_ipr_cby_user_id FOREIGN KEY (`created_by`) REFERENCES `user`(`id`),
+    CONSTRAINT fk_ipr_uby_user_id FOREIGN KEY (`updated_by`) REFERENCES `user`(`id`)
 );
 
 
@@ -276,7 +297,7 @@ CREATE TABLE `sale` (
 	`total_amount` DOUBLE(8,2) NOT NULL,
 	`cost` DOUBLE(8,2) NOT NULL,
     `paid_amount` DOUBLE(8,2) NOT NULL,
-    `change` DOUBLE(8,2) NOT NULL,
+    `refund_amount` DOUBLE(8,2) NOT NULL,
 	`observations` VARCHAR(250) NULL,
     `deleted` BIT NOT NULL DEFAULT 0,
 	`created_by` INT NOT NULL,
@@ -384,7 +405,7 @@ CREATE TABLE `product_unit` (
     `quantity_by_unit` INT NOT NULL,
     `cost_by_unit` DOUBLE(8,2) NOT NULL,
     `price_by_unit` DOUBLE(8,2) NOT NULL,
-    `special_price_by_unit` DOUBLE(8,2) NOT NULL,
+    `out_of_time_price_by_unit` DOUBLE(8,2) NOT NULL,
     `is_default` BIT NULL DEFAULT 0,
     CONSTRAINT pk_pu_pid_uid PRIMARY KEY (`product_id`, `unit_id`),
     CONSTRAINT fk_pu_pid_user_id FOREIGN KEY (`product_id`) REFERENCES `product`(`id`),
@@ -432,24 +453,6 @@ CREATE TABLE `purchase_detail` (
 );
 
 
-CREATE TABLE `settings` (
-	`id` INT NOT NULL AUTO_INCREMENT,
-	`store_code` VARCHAR(50) NOT NULL, -- CÓDIGO UNICO DEL NEGOCIO
-    `store_name` VARCHAR(250) NOT NULL, -- NOMBRE DEL NEGOCIO
-    `store_description` VARCHAR(250) NULL, -- DESCRIPCIÓN DEL NEGOCIO
-	`tax` DOUBLE(8,2) NOT NULL, -- PORCENTAJE DE IMPUESTO
-    `special_sale_time` TIME NOT NULL, -- HORA (FUERA DE HORARIO)
-    `deleted` BIT NOT NULL DEFAULT 0,
-	`created_by` INT NOT NULL,
-	`created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	`updated_by` INT NULL,
-	`updated_date` DATETIME NULL,
-    CONSTRAINT pk_settings PRIMARY KEY (`id`),
-    CONSTRAINT fk_settings_cby_user_id FOREIGN KEY (`created_by`) REFERENCES `user`(`id`),
-    CONSTRAINT fk_settings_uby_user_id FOREIGN KEY (`updated_by`) REFERENCES `user`(`id`)
-);
-
-
 CREATE TABLE `notification` (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`code` VARCHAR(50) NOT NULL,
@@ -470,6 +473,7 @@ INSERT INTO `notification` (`code`, description, created_by) VALUES ('NOTINVCAN'
 INSERT INTO `notification` (`code`, description, created_by) VALUES ('NOTPURCAN', 'Notificación al generar una cancelación de compra', 1);
 INSERT INTO `notification` (`code`, description, created_by) VALUES ('NOTSALCAN', 'Notificación al generar una cancelación de venta', 1);
 INSERT INTO `notification` (`code`, description, created_by) VALUES ('NOTPROREQ', 'Notificación al generar una solicitud de producto', 1);
+INSERT INTO `notification` (`code`, description, created_by) VALUES ('NOTPROREQCAN', 'Notificación al generar una cancelación de solicitud de producto', 1);
 INSERT INTO `notification` (`code`, description, created_by) VALUES ('NOTMINLEV', 'Notificación generada después de alcanzar el nivel minimo de unidades', 1);
 
 
