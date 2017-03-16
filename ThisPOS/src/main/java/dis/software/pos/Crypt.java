@@ -7,13 +7,16 @@ package dis.software.pos;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
-import java.security.MessageDigest;
+import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
-import java.util.logging.Level;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,46 +27,83 @@ import org.apache.logging.log4j.Logger;
 public class Crypt
 {
     
-    private static Logger logger = LogManager.getLogger(Crypt.class.getSimpleName());
+    private static final Logger logger = LogManager.getLogger(Crypt.class.getSimpleName());
+    
+    private static final String key = "Peanutsoftware28";
     
     /*public static void main(String[] args)
     {
-        try {
-            logger.info(Base64.getEncoder().encodeToString(getSalt()));
-            
-            byte[] _byte = "MMkaz5VWpTOYEwKOjikaFA==".getBytes();
-            logger.info(encrypt("milton28", _byte));
-        } catch (NoSuchAlgorithmException | InvalidKeyException ex) {
-            logger.error("Error encrypting the password", ex);
-        }
+        String value = "milton28";
+        logger.info("Value: " + value);
+        String salt = getSalt();
+        logger.info("Salt: " + salt);
+        logger.info("Value encrypted: " + encrypt(value, salt));
+        logger.info("Value decrypted: " + decrypt(encrypt(value, salt), salt));
     }/**/
     
-    public static String encrypt(String value, byte[] salt) throws InvalidKeyException
+    public static String encrypt(String value, String salt)
     {
-        String sha1 = null;
         try
         {
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
-            md.update(salt);
-            byte[] bytes = md.digest(value.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (int i=0; i<bytes.length; i++) {
-                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-            }
-            sha1 = sb.toString();
-        } catch (NoSuchAlgorithmException ex) {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, Crypt.getSecretKey());
+            byte[] aes = cipher.doFinal((salt + value).getBytes("utf-8"));
+            return Base64.getEncoder().encodeToString(aes);
+        }
+        catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
+            | IllegalBlockSizeException | BadPaddingException ex)
+        {
             logger.error("Error encrypting the password", ex);
         }
-        return sha1;
+        catch (UnsupportedEncodingException ex)
+        {
+            logger.error("Error encoding the password", ex);
+        }
+        return null;
     }
     
-    private static byte[] getSalt() throws NoSuchAlgorithmException
+    public static String decrypt(String value, String salt)
     {
-        SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
-        byte[] salt = new byte[16];
-        secureRandom.setSeed(new Date().getTime());
-        secureRandom.nextBytes(salt);
-        return salt;
+        try
+        {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, Crypt.getSecretKey());
+            byte[] bytes = Base64.getDecoder().decode(value);
+            byte[] decrypted = cipher.doFinal(bytes);
+            return new String(decrypted, "utf-8").substring(salt.length());
+        }
+        catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
+            | IllegalBlockSizeException | BadPaddingException ex)
+        {
+            logger.error("Error decrypting the password", ex);
+        } catch (UnsupportedEncodingException ex)
+        {
+            logger.error("Error decoding the password", ex);
+        }
+        return null;
+    }
+    
+    public static String getSalt()
+    {
+        byte[] salt = null;
+        try
+        {
+            SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
+            salt = new byte[16];
+            secureRandom.setSeed(new Date().getTime());
+            secureRandom.nextBytes(salt);
+        }
+        catch (NoSuchAlgorithmException ex)
+        {
+            logger.error("Error getting salt", ex);
+        }
+        return Base64.getEncoder().encodeToString(salt);
+    }
+    
+    private static Key getSecretKey()
+    {
+        Key secretKey = new SecretKeySpec(Crypt.key.getBytes(), "AES");
+        return secretKey;
     }
     
 }
