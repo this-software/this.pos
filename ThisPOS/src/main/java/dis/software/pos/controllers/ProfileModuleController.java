@@ -18,6 +18,6 @@ public class ProfileModuleController extends GenericHibernateController<ProfileM
     implements IProfileModule
 {
     
-    private static Logger logger = LogManager.getLogger(ProfileController.class.getSimpleName());
+    private static Logger logger = LogManager.getLogger(ProfileModuleController.class.getSimpleName());
 
 }
