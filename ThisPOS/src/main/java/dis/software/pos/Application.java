@@ -1,5 +1,6 @@
 package dis.software.pos;
 
+import dis.software.pos.entities.Setting;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -13,7 +14,8 @@ public class Application
     
     private static Logger logger = LogManager.getLogger(Application.class.getSimpleName());
     
-    private static ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring.cfg.xml");;
+    private static ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring.cfg.xml");
+    private static Setting setting;
     
     public Application()
     {
@@ -27,6 +29,14 @@ public class Application
 
     public void setContext(ClassPathXmlApplicationContext context) {
         Application.context = context;
+    }
+
+    public static Setting getSetting() {
+        return setting;
+    }
+
+    public static void setSetting(Setting setting) {
+        Application.setting = setting;
     }
     
 }
