@@ -11,7 +11,7 @@ package dis.software.pos;
  */
 public enum EntityStatus
 {
-    INACTIVE(0), ACTIVE(1), CANCELED(2);
+    INACTIVE(0), ACTIVE(1), CANCELED(2), LOCKED(3);
     private final int value;
     private EntityStatus(int value)
     {

@@ -13,7 +13,7 @@ package dis.software.pos;
  */
 public enum InventoryType
 {
-    INCOME(0), OUTCOME(1), CANCEL(2);
+    INCOME(0), OUTCOME(1), CANCEL(2), SYSTEM(3);
     private final int value;
     private InventoryType(int value)
     {
