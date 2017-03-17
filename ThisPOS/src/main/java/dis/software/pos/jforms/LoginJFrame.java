@@ -11,7 +11,7 @@ import dis.software.pos.ApplicationSession;
 import dis.software.pos.ApplicationSound;
 import dis.software.pos.Crypt;
 import dis.software.pos.OptionPane;
-import dis.software.pos.entities.Setting;
+import dis.software.pos.Setting;
 import dis.software.pos.entities.User;
 import dis.software.pos.interfaces.IUser;
 import java.awt.event.ActionEvent;
