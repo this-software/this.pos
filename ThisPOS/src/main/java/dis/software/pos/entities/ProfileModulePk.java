@@ -7,6 +7,7 @@ package dis.software.pos.entities;
 
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
@@ -19,11 +20,13 @@ import javax.persistence.ManyToOne;
 public class ProfileModulePk implements Serializable
 {
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Profile profile;
     
     @ManyToOne(fetch = FetchType.LAZY)
     private Module module;
+    
+    public ProfileModulePk() {}
     
     public Profile getProfile() {
         return profile;

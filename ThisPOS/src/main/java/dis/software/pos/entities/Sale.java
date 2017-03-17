@@ -8,7 +8,6 @@
 
 package dis.software.pos.entities;
 
-import dis.software.pos.InventoryType;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -29,22 +28,37 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * Clase que contiene los campos de inventario
+ * Clase que contiene los campos de una venta
  * @author Milton Cavazos
  */
 @Entity
-public class Inventory implements Serializable
+public class Sale implements Serializable
 {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
-    @Column
-    private String code;
+    @Column(nullable = false)
+    private Double subtotal;
     
-    @Column(unique = true, length = 50)
-    private Integer type;
+    @Column(nullable = false)
+    private Double tax;
+    
+    @Column(name = "total_amount", nullable = false)
+    private Double totalAmount;
+    
+    @Column(nullable = false)
+    private Double cost;
+    
+    @Column(name = "paid_amount", nullable = false)
+    private Double paidAmount;
+    
+    @Column(name = "refund_amount", nullable = false)
+    private Double refundAmount;
+    
+    @Column(length = 250)
+    private String observations;
     
     @Column(nullable = false)
     private Boolean deleted = Boolean.FALSE;
@@ -65,25 +79,30 @@ public class Inventory implements Serializable
     @Temporal(value = TemporalType.TIMESTAMP)
     private Calendar updatedDate;
     
-    @OneToMany(mappedBy = "inventoryProductPk.inventory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<InventoryProduct> inventoryProducts = new HashSet<>();
+    @OneToMany(mappedBy = "sale", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<SaleDetail> saleDetails = new HashSet<>();
     
-    public Inventory() {}
+    @OneToMany(mappedBy = "sale", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<SalePromotionDetail> salePromotionDetails = new HashSet<>();
     
-    public Inventory(Long id)
+    public Sale() {}
+    
+    public Sale(Long id)
     {
         this.id = id;
     }
     
     /**
      * Método constructor de la clase
-     * @param id
-     * @param type 
+     * @param subtotal Subtotal de la venta
+     * @param tax Impuesto de la venta
+     * @param totalAmount Monto total de la venta
      */
-    public Inventory(Long id, InventoryType type)
+    public Sale(Double subtotal, Double tax, Double totalAmount)
     {
-        this.id = id;
-        this.type = type.getValue();
+        this.subtotal = subtotal;
+        this.tax = tax;
+        this.totalAmount = totalAmount;
     }
 
     public Long getId() {
@@ -94,28 +113,60 @@ public class Inventory implements Serializable
         this.id = id;
     }
 
-    public String getCode() {
-        return code;
+    public Double getSubtotal() {
+        return subtotal;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setSubtotal(Double subtotal) {
+        this.subtotal = subtotal;
+    }
+    
+    public Double getTax() {
+        return tax;
     }
 
-    public InventoryType getType()
-    {
-        switch(type)
-        {
-            case 0: return InventoryType.INCOME;
-            case 1: return InventoryType.OUTCOME;
-            case 2: return InventoryType.CANCEL;
-            case 3: return InventoryType.SYSTEM;
-        }
-        return null;
+    public void setTax(Double tax) {
+        this.tax = tax;
     }
 
-    public void setType(InventoryType type) {
-        this.type = type.getValue();
+    public Double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public Double getCost() {
+        return cost;
+    }
+
+    public void setCost(Double cost) {
+        this.cost = cost;
+    }
+
+    public Double getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(Double paidAmount) {
+        this.paidAmount = paidAmount;
+    }
+
+    public Double getRefundAmount() {
+        return refundAmount;
+    }
+
+    public void setRefundAmount(Double refundAmount) {
+        this.refundAmount = refundAmount;
+    }
+
+    public String getObservations() {
+        return observations;
+    }
+
+    public void setObservations(String observations) {
+        this.observations = observations;
     }
 
     public Boolean getDeleted() {
@@ -158,12 +209,20 @@ public class Inventory implements Serializable
         this.updatedDate = updatedDate;
     }
 
-    public Set<InventoryProduct> getInventoryProducts() {
-        return inventoryProducts;
+    public Set<SaleDetail> getSaleDetails() {
+        return saleDetails;
     }
 
-    public void setInventoryProducts(Set<InventoryProduct> inventoryProducts) {
-        this.inventoryProducts = inventoryProducts;
+    public void setSaleDetails(Set<SaleDetail> saleDetails) {
+        this.saleDetails = saleDetails;
+    }
+
+    public Set<SalePromotionDetail> getSalePromotionDetails() {
+        return salePromotionDetails;
+    }
+
+    public void setSalePromotionDetails(Set<SalePromotionDetail> salePromotionDetails) {
+        this.salePromotionDetails = salePromotionDetails;
     }
     
     @Override
@@ -172,7 +231,7 @@ public class Inventory implements Serializable
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         
-        Inventory that = (Inventory) o;
+        Sale that = (Sale) o;
         return !(this.id != null ? !this.id.equals(that.getId())
             : that.getId() != null);
     }
@@ -180,14 +239,14 @@ public class Inventory implements Serializable
     @Override
     public int hashCode()
     {
-        int hash = 7;
-        hash = 59 * hash + Objects.hashCode(this.id);
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.id);
         return hash;
     }
-    
+
     @Override
     public String toString() {
-        return "Inventory: " + this.id + ", " + this.code + ", " + this.type;
-    }    
+        return "Sales: " + this.id + ", " + this.subtotal + ", " + this.tax + ", " + this.totalAmount;
+    }
     
 }

@@ -48,8 +48,8 @@ public class Privileges implements Serializable
     }
     
     
-    public Boolean getViewProperty() {
-        return view!=0;
+    public Property getViewProperty() {
+        return view != 0 ? Property.ALLOW : Property.DENY;
     }
     
     public void setViewProperty(Property property) {
@@ -57,8 +57,8 @@ public class Privileges implements Serializable
     }
     
     
-    public Boolean getCreateProperty() {
-        return create!=0;
+    public Property getCreateProperty() {
+        return create != 0 ? Property.ALLOW : Property.DENY;
     }
     
     public void setCreateProperty(Property property) {
@@ -66,8 +66,8 @@ public class Privileges implements Serializable
     }
     
     
-    public Boolean getEditProperty() {
-        return edit!=0;
+    public Property getEditProperty() {
+        return edit != 0 ? Property.ALLOW : Property.DENY;
     }
     
     public void setEditProperty(Property property) {
@@ -75,8 +75,8 @@ public class Privileges implements Serializable
     }
     
     
-    public Boolean getDeleteProperty() {
-        return delete!=0;
+    public Property getDeleteProperty() {
+        return delete != 0 ? Property.ALLOW : Property.DENY;
     }
     
     public void setDeleteProperty(Property property) {

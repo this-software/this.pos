@@ -8,7 +8,8 @@
 package dis.software.pos.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
@@ -17,7 +18,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -28,6 +31,19 @@ import javax.persistence.TemporalType;
 @Entity
 public class Module implements Serializable
 {
+    
+    public static final String USERS = "MOD0001";
+    public static final String PROFILES = "MOD0002";
+    public static final String INVENTORY = "MOD0003";
+    public static final String PURCHASES = "MOD0004";
+    public static final String SALES = "MOD0005";
+    public static final String CATEGORIES = "MOD0006";
+    public static final String PROVIDERS = "MOD0007";
+    public static final String PRODUCTS = "MOD0008";
+    public static final String COSTS = "MOD0009";
+    public static final String UNITS = "MOD0010";
+    public static final String NOTIFICATIONS = "MOD0011";
+    public static final String SYNCH = "MOD0012";
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -45,19 +61,21 @@ public class Module implements Serializable
     @Column
     private Integer deleted;
     
-    @Column(name = "created_by")
-    private Long createdBy;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private User createdBy;
     
     @Column(name = "created_date")
     @Temporal(value = TemporalType.DATE)
-    private Date createdDate = new Date();
+    private Calendar createdDate = new GregorianCalendar();
     
-    @Column(name = "updated_by")
-    private Long updatedBy;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by")
+    private User updatedBy;
     
     @Column(name = "updated_date")
     @Temporal(value = TemporalType.DATE)
-    private Date updatedDate;
+    private Calendar updatedDate;
     
     @OneToMany(mappedBy = "profileModulePk.module", fetch = FetchType.LAZY)
     private Set<ProfileModule> profileModules = new HashSet<>();
@@ -122,35 +140,35 @@ public class Module implements Serializable
         this.deleted = deleted;
     }
 
-    public Long getCreatedBy() {
+    public User getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(Long createdBy) {
+    public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
     }
 
-    public Date getCreatedDate() {
+    public Calendar getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(Calendar createdDate) {
         this.createdDate = createdDate;
     }
 
-    public Long getUpdatedBy() {
+    public User getUpdatedBy() {
         return updatedBy;
     }
 
-    public void setUpdatedBy(Long updatedBy) {
+    public void setUpdatedBy(User updatedBy) {
         this.updatedBy = updatedBy;
     }
 
-    public Date getUpdatedDate() {
+    public Calendar getUpdatedDate() {
         return updatedDate;
     }
 
-    public void setUpdatedDate(Date updatedDate) {
+    public void setUpdatedDate(Calendar updatedDate) {
         this.updatedDate = updatedDate;
     }
     

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Milton Cavazos
+ * Copyright (C) 2017 Milton Cavazos
  *
  * Este programa es de código libre; usted podrá instalar y/o
  * utilizar una copia del programa de computación en una computadora compatible,
@@ -10,20 +10,19 @@ package dis.software.pos.entities;
 
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
 /**
- * Clase que contiene los campos de identidad para los productos ingresados al inventario
+ * Clase que contiene los campos de identidad para los productos solicitados por cotejo de inventario
  * @author Milton Cavazos
  */
 @Embeddable
-public class InventoryProductPk implements Serializable
+public class InventoryProductRequestPk implements Serializable
 {
-    
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Inventory inventory;
     
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,15 +31,15 @@ public class InventoryProductPk implements Serializable
     @ManyToOne(fetch = FetchType.LAZY)
     private Unit unit;
 
-    public InventoryProductPk() {}
+    public InventoryProductRequestPk() {}
     
-    public InventoryProductPk(Inventory inventory, Product product, Unit unit)
+    public InventoryProductRequestPk(Inventory inventory, Product product, Unit unit)
     {
         this.inventory = inventory;
         this.product = product;
         this.unit = unit;
     }
-    
+
     public Inventory getInventory() {
         return inventory;
     }
@@ -64,14 +63,14 @@ public class InventoryProductPk implements Serializable
     public void setUnit(Unit unit) {
         this.unit = unit;
     }
-    
+
     @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         
-        InventoryProductPk that = (InventoryProductPk) o;
+        InventoryProductRequestPk that = (InventoryProductRequestPk) o;
         if (inventory != null ? !inventory.equals(that.inventory) : that.inventory != null) return false;
         if (product != null ? !product.equals(that.product) : that.product != null) return false;
         return !(unit != null ? !unit.equals(that.unit) : that.unit != null);
@@ -81,15 +80,15 @@ public class InventoryProductPk implements Serializable
     public int hashCode()
     {
         int hash = 7;
-        hash = 47 * hash + Objects.hashCode(this.inventory);
-        hash = 47 * hash + Objects.hashCode(this.product);
-        hash = 47 * hash + Objects.hashCode(this.unit);
+        hash = 59 * hash + Objects.hashCode(this.inventory);
+        hash = 59 * hash + Objects.hashCode(this.product);
+        hash = 59 * hash + Objects.hashCode(this.unit);
         return hash;
     }
-    
+
     @Override
     public String toString() {
-        return "ProfileModulePk: " + this.inventory + ", " + this.product + ", " + this.unit;
+        return "InventoryProductRequestPk: " + this.inventory + ", " + this.product + ", " + this.unit;
     }
-    
+
 }

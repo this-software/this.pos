@@ -5,8 +5,11 @@
  */
 package dis.software.pos.entities;
 
+import dis.software.pos.EntityStatus;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,7 +22,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 /**
  *
@@ -53,21 +55,29 @@ public class User implements Serializable
     private String salt;
     
     @Column
-    private Integer active;
+    private Integer status;
     
-    @Column(name = "created_by")
-    private Long createdBy;
+    @Column
+    private Boolean deleted;
+    
+    @Column(name = "receive_notifications")
+    private Boolean receiveNotifications;
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private User createdBy;
     
     @Column(name = "created_date")
-    @Temporal(value = TemporalType.DATE)
-    private Date createdDate;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Calendar createdDate = new GregorianCalendar();
     
-    @Column(name = "updated_by")
-    private Long updatedBy;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by")
+    private User updatedBy;
     
     @Column(name = "updated_date")
-    @Temporal(value = TemporalType.DATE)
-    private Date updatedDate;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Calendar updatedDate;
     
     @OneToOne(fetch = FetchType.LAZY)
     @JoinTable(name = "user_profile",
@@ -77,19 +87,23 @@ public class User implements Serializable
 
     public User() {}
     
+    public User(Long id)
+    {
+        this.id = id;
+    }
+    
     /**
      * Método constructor de la clase
      * @param email Correo del usuario
-     * @param userName Nombre de usuario
+     * @param name Nombre de usuario
      * @param password Contraseña del usuario
      */
-    public User(String email, String userName, String password)
+    public User(String email, String name, String password)
     {
         this.email = email;
-        this.name = userName;
+        this.name = name;
         this.password = password;
     }
-
     
     public Long getId() {
         return id;
@@ -99,7 +113,6 @@ public class User implements Serializable
         this.id = id;
     }
 
-    
     public String getCode() {
         return code;
     }
@@ -108,7 +121,6 @@ public class User implements Serializable
         this.code = code;
     }
     
-
     public String getName() {
         return name;
     }
@@ -116,7 +128,6 @@ public class User implements Serializable
     public void setName(String name) {
         this.name = name;
     }
-    
     
     public String getEmail() {
         return email;
@@ -126,7 +137,6 @@ public class User implements Serializable
         this.email = email;
     }
 
-    
     public String getPassword() {
         return password;
     }
@@ -135,7 +145,6 @@ public class User implements Serializable
         this.password = password;
     }
 
-    
     public String getSalt() {
         return salt;
     }
@@ -144,52 +153,70 @@ public class User implements Serializable
         this.salt = salt;
     }
     
-    
-    public Boolean isActive() {
-        return (active == 1);
+    public EntityStatus getStatus()
+    {
+        switch(status)
+        {
+            case 0: return EntityStatus.INACTIVE;
+            case 1: return EntityStatus.ACTIVE;
+            case 2: return EntityStatus.CANCELED;
+            case 3: return EntityStatus.LOCKED;
+        }
+        return null;
     }
     
-    public void isActive(Integer active) {
-        this.active = active;
+    public void setStatus(EntityStatus status) {
+        this.status = status.getValue();
     }
 
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public Boolean getReceiveNotifications() {
+        return receiveNotifications;
+    }
+
+    public void setReceiveNotifications(Boolean receiveNotifications) {
+        this.receiveNotifications = receiveNotifications;
+    }
     
-    public Long getCreatedBy() {
+    public User getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(Long createdBy) {
+    public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
     }
 
-    
-    public Date getCreatedDate() {
+    public Calendar getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(Calendar createdDate) {
         this.createdDate = createdDate;
     }
 
-    
-    public Long getUpdatedBy() {
+    public User getUpdatedBy() {
         return updatedBy;
     }
 
-    public void setUpdatedBy(Long updatedBy) {
+    public void setUpdatedBy(User updatedBy) {
         this.updatedBy = updatedBy;
     }
 
-    
-    public Date getUpdatedDate() {
+    public Calendar getUpdatedDate() {
         return updatedDate;
     }
 
-    public void setUpdatedDate(Date updatedDate) {
+    public void setUpdatedDate(Calendar updatedDate) {
         this.updatedDate = updatedDate;
     }
 
-    
     public Profile getProfile() {
         return profile;
     }
@@ -198,6 +225,24 @@ public class User implements Serializable
         this.profile = profile;
     }
     
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        
+        User that = (User) o;
+        return !(this.id != null ? !this.id.equals(that.getId())
+            : that.getId() != null);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 11 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
     
     @Override
     public String toString() {

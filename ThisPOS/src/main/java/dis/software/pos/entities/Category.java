@@ -8,13 +8,17 @@
 package dis.software.pos.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -42,19 +46,21 @@ public class Category implements Serializable
     @Column
     private Boolean deleted;
     
-    @Column(name = "created_by")
-    private Long createdBy;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private User createdBy;
     
     @Column(name = "created_date")
-    @Temporal(value = TemporalType.DATE)
-    private Date createdDate = new Date();
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Calendar createdDate = new GregorianCalendar();
     
-    @Column(name = "updated_by")
-    private Long updatedBy;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by")
+    private User updatedBy;
     
     @Column(name = "updated_date")
-    @Temporal(value = TemporalType.DATE)
-    private Date updatedDate;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Calendar updatedDate;
     
     public Category() {}
     
@@ -112,39 +118,39 @@ public class Category implements Serializable
         return deleted;
     }
 
-    public void isDeleted(Boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
 
-    public Long getCreatedBy() {
+    public User getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(Long createdBy) {
+    public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
     }
 
-    public Date getCreatedDate() {
+    public Calendar getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(Calendar createdDate) {
         this.createdDate = createdDate;
     }
 
-    public Long getUpdatedBy() {
+    public User getUpdatedBy() {
         return updatedBy;
     }
 
-    public void setUpdatedBy(Long updatedBy) {
+    public void setUpdatedBy(User updatedBy) {
         this.updatedBy = updatedBy;
     }
 
-    public Date getUpdatedDate() {
+    public Calendar getUpdatedDate() {
         return updatedDate;
     }
 
-    public void setUpdatedDate(Date updatedDate) {
+    public void setUpdatedDate(Calendar updatedDate) {
         this.updatedDate = updatedDate;
     }
     

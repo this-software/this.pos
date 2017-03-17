@@ -11,7 +11,10 @@ package dis.software.pos.entities;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,50 +22,43 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * Clase que contiene los campos del proveedor
+ * Clase que contiene los campos de una compra
  * @author Milton Cavazos
  */
 @Entity
-public class Provider implements Serializable
+public class Purchase implements Serializable
 {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
-    @Column(unique = true, length = 50)
-    private String code;
+    @Column(nullable = false)
+    private Double subtotal;
     
-    @Column(unique = true, length = 50)
-    private String name;
+    @Column(nullable = false)
+    private Double tax;
     
-    @Column(nullable = true, length = 100)
-    private String description;
+    @Column(nullable = false)
+    private Double cost;
     
-    @Column(nullable = true, length = 50)
-    private String country;
+    @Column(name = "paid_amount", nullable = false)
+    private Double paidAmount;
     
-    @Column(name = "[state]", nullable = true, length = 50)
-    private String state;
+    @Column(length = 250)
+    private String observations;
     
-    @Column(nullable = true, length = 50)
-    private String city;
+    @Column(nullable = false)
+    private Integer status;
     
-    @Column(nullable = true, length = 100)
-    private String address;
-    
-    @Column(name = "postal_code", nullable = true, length = 8)
-    private String postalCode;
-    
-    @Column(nullable = true, length = 12)
-    private String phone;
-    
-    @Column
-    private Boolean deleted;
+    @Column(nullable = false)
+    private Boolean deleted = Boolean.FALSE;
     
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
@@ -80,24 +76,29 @@ public class Provider implements Serializable
     @Temporal(value = TemporalType.TIMESTAMP)
     private Calendar updatedDate;
     
-    public Provider() {}
+    @OneToMany(mappedBy = "purchaseDetailPk.purchase", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<PurchaseDetail> purchaseDetails = new HashSet<>();
+
+    public Purchase() {}
     
-    public Provider(Long id)
+    public Purchase(Long id)
     {
         this.id = id;
     }
     
     /**
      * Método constructor de la clase
-     * @param code Código del módulo
-     * @param name Nombre del módulo
-     * @param description Descripción del módulo
+     * @param subtotal Subtotal de la compra
+     * @param tax Impuesto de la compra
+     * @param cost Costo de la compra según costos registrados por producto
+     * @param paidAmount Monto real pagado por la compra
      */
-    public Provider(String code, String name, String description)
+    public Purchase(Double subtotal, Double tax, Double cost, Double paidAmount)
     {
-        this.code = code;
-        this.name = name;
-        this.description = description;
+        this.subtotal = subtotal;
+        this.tax = tax;
+        this.cost = cost;
+        this.paidAmount = paidAmount;
     }
 
     public Long getId() {
@@ -108,79 +109,55 @@ public class Provider implements Serializable
         this.id = id;
     }
 
-    public String getCode() {
-        return code;
+    public Double getSubtotal() {
+        return subtotal;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setSubtotal(Double subtotal) {
+        this.subtotal = subtotal;
     }
 
-    public String getName() {
-        return name;
+    public Double getTax() {
+        return tax;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTax(Double tax) {
+        this.tax = tax;
     }
 
-    public String getDescription() {
-        return description;
+    public Double getCost() {
+        return cost;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCost(Double cost) {
+        this.cost = cost;
     }
 
-    public String getCountry() {
-        return country;
+    public Double getPaidAmount() {
+        return paidAmount;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setPaidAmount(Double paidAmount) {
+        this.paidAmount = paidAmount;
     }
 
-    public String getState() {
-        return state;
+    public String getObservations() {
+        return observations;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setObservations(String observations) {
+        this.observations = observations;
     }
 
-    public String getCity() {
-        return city;
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public Boolean isDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
@@ -219,14 +196,22 @@ public class Provider implements Serializable
     public void setUpdatedDate(Calendar updatedDate) {
         this.updatedDate = updatedDate;
     }
-    
+
+    public Set<PurchaseDetail> getPurchaseDetails() {
+        return purchaseDetails;
+    }
+
+    public void setPurchaseDetails(Set<PurchaseDetail> purchaseDetails) {
+        this.purchaseDetails = purchaseDetails;
+    }
+
     @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         
-        Provider that = (Provider) o;
+        Purchase that = (Purchase) o;
         return !(this.id != null ? !this.id.equals(that.getId())
             : that.getId() != null);
     }
@@ -235,13 +220,13 @@ public class Provider implements Serializable
     public int hashCode()
     {
         int hash = 3;
-        hash = 89 * hash + Objects.hashCode(this.id);
+        hash = 37 * hash + Objects.hashCode(this.id);
         return hash;
     }
-    
+
     @Override
     public String toString() {
-        return "Provider: " + this.id + ", " + this.code + ", " + this.name + ", " + this.description;
+        return "Purchase: " + this.id + ", " + this.subtotal + ", " + this.tax + ", " + this.cost;
     }
-    
+
 }

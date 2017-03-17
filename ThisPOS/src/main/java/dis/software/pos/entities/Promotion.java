@@ -11,25 +11,27 @@ package dis.software.pos.entities;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * Clase que contiene los campos del proveedor
+ * Clase que contiene los campos de una promoción
  * @author Milton Cavazos
  */
 @Entity
-public class Provider implements Serializable
+public class Promotion implements Serializable
 {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -40,49 +42,46 @@ public class Provider implements Serializable
     @Column(unique = true, length = 50)
     private String name;
     
-    @Column(nullable = true, length = 100)
+    @Column
     private String description;
     
-    @Column(nullable = true, length = 50)
-    private String country;
+    @Column
+    private Double price;
     
-    @Column(name = "[state]", nullable = true, length = 50)
-    private String state;
-    
-    @Column(nullable = true, length = 50)
-    private String city;
-    
-    @Column(nullable = true, length = 100)
-    private String address;
-    
-    @Column(name = "postal_code", nullable = true, length = 8)
-    private String postalCode;
-    
-    @Column(nullable = true, length = 12)
-    private String phone;
+    @Column
+    private Double cost;
     
     @Column
     private Boolean deleted;
     
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by")
-    private User createdBy;
+    @Column(name = "created_by")
+    private Long createdBy;
     
     @Column(name = "created_date")
     @Temporal(value = TemporalType.TIMESTAMP)
     private Calendar createdDate = new GregorianCalendar();
     
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "updated_by")
-    private User updatedBy;
+    @Column(name = "updated_by")
+    private Long updatedBy;
     
     @Column(name = "updated_date")
     @Temporal(value = TemporalType.TIMESTAMP)
     private Calendar updatedDate;
     
-    public Provider() {}
+    @Column(name = "begin_date", nullable = false)
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Calendar beginDate;
     
-    public Provider(Long id)
+    @Column(name = "expiration_date", nullable = false)
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Calendar expirationDate;
+    
+    @OneToMany(mappedBy = "promotionProductPk.promotion", fetch = FetchType.LAZY)
+    private Set<PromotionProduct> promotionProducts = new HashSet<>();
+
+    public Promotion() {}
+    
+    public Promotion(Long id)
     {
         this.id = id;
     }
@@ -93,7 +92,7 @@ public class Provider implements Serializable
      * @param name Nombre del módulo
      * @param description Descripción del módulo
      */
-    public Provider(String code, String name, String description)
+    public Promotion(String code, String name, String description)
     {
         this.code = code;
         this.name = name;
@@ -132,55 +131,23 @@ public class Provider implements Serializable
         this.description = description;
     }
 
-    public String getCountry() {
-        return country;
+    public Double getPrice() {
+        return price;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
-    public String getState() {
-        return state;
+    public Double getCost() {
+        return cost;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setCost(Double cost) {
+        this.cost = cost;
     }
 
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public Boolean isDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
@@ -188,11 +155,11 @@ public class Provider implements Serializable
         this.deleted = deleted;
     }
 
-    public User getCreatedBy() {
+    public Long getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(User createdBy) {
+    public void setCreatedBy(Long createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -204,11 +171,11 @@ public class Provider implements Serializable
         this.createdDate = createdDate;
     }
 
-    public User getUpdatedBy() {
+    public Long getUpdatedBy() {
         return updatedBy;
     }
 
-    public void setUpdatedBy(User updatedBy) {
+    public void setUpdatedBy(Long updatedBy) {
         this.updatedBy = updatedBy;
     }
 
@@ -219,14 +186,38 @@ public class Provider implements Serializable
     public void setUpdatedDate(Calendar updatedDate) {
         this.updatedDate = updatedDate;
     }
-    
+
+    public Calendar getBeginDate() {
+        return beginDate;
+    }
+
+    public void setBeginDate(Calendar beginDate) {
+        this.beginDate = beginDate;
+    }
+
+    public Calendar getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(Calendar expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public Set<PromotionProduct> getPromotionProducts() {
+        return promotionProducts;
+    }
+
+    public void setPromotionProducts(Set<PromotionProduct> products) {
+        this.promotionProducts = products;
+    }
+
     @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         
-        Provider that = (Provider) o;
+        Promotion that = (Promotion) o;
         return !(this.id != null ? !this.id.equals(that.getId())
             : that.getId() != null);
     }
@@ -234,14 +225,14 @@ public class Provider implements Serializable
     @Override
     public int hashCode()
     {
-        int hash = 3;
-        hash = 89 * hash + Objects.hashCode(this.id);
+        int hash = 5;
+        hash = 97 * hash + Objects.hashCode(this.id);
         return hash;
     }
-    
+
     @Override
     public String toString() {
-        return "Provider: " + this.id + ", " + this.code + ", " + this.name + ", " + this.description;
+        return "Promotion: " + this.id + ", " + this.code + ", " + this.name + ", " + this.description;
     }
-    
+
 }

@@ -10,44 +10,25 @@ package dis.software.pos.entities;
 
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
 /**
- * Clase que contiene los campos de identidad para los productos ingresados al inventario
+ * Clase que contiene los campos de identidad para cada combinación de Producto y Unidad
  * @author Milton Cavazos
  */
 @Embeddable
-public class InventoryProductPk implements Serializable
+public class ProductUnitPk implements Serializable
 {
-    
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Inventory inventory;
     
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Unit unit;
-
-    public InventoryProductPk() {}
     
-    public InventoryProductPk(Inventory inventory, Product product, Unit unit)
-    {
-        this.inventory = inventory;
-        this.product = product;
-        this.unit = unit;
-    }
-    
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    public void setInventory(Inventory inventory) {
-        this.inventory = inventory;
-    }
+    public ProductUnitPk() {}
 
     public Product getProduct() {
         return product;
@@ -71,8 +52,7 @@ public class InventoryProductPk implements Serializable
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         
-        InventoryProductPk that = (InventoryProductPk) o;
-        if (inventory != null ? !inventory.equals(that.inventory) : that.inventory != null) return false;
+        ProductUnitPk that = (ProductUnitPk) o;
         if (product != null ? !product.equals(that.product) : that.product != null) return false;
         return !(unit != null ? !unit.equals(that.unit) : that.unit != null);
     }
@@ -80,16 +60,15 @@ public class InventoryProductPk implements Serializable
     @Override
     public int hashCode()
     {
-        int hash = 7;
-        hash = 47 * hash + Objects.hashCode(this.inventory);
-        hash = 47 * hash + Objects.hashCode(this.product);
-        hash = 47 * hash + Objects.hashCode(this.unit);
+        int hash = 3;
+        hash = 67 * hash + Objects.hashCode(this.product);
+        hash = 67 * hash + Objects.hashCode(this.unit);
         return hash;
     }
     
     @Override
     public String toString() {
-        return "ProfileModulePk: " + this.inventory + ", " + this.product + ", " + this.unit;
+        return "ProductUnitPk: " + this.product + ", " + this.unit;
     }
     
 }

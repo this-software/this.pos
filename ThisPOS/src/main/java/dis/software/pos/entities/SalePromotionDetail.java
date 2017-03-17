@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,50 +20,50 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * Clase que contiene los campos del proveedor
+ * Clase que contiene los campos de un detalle de venta de una promoción
  * @author Milton Cavazos
  */
 @Entity
-public class Provider implements Serializable
+@Table(name = "sale_promotion_detail")
+public class SalePromotionDetail implements Serializable
 {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
-    @Column(unique = true, length = 50)
-    private String code;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "sale_id", nullable = false)
+    private Sale sale;
     
-    @Column(unique = true, length = 50)
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "promotion_id", nullable = false)
+    private Promotion promotion;
     
-    @Column(nullable = true, length = 100)
-    private String description;
+    @Column(nullable = false)
+    private Double price;
     
-    @Column(nullable = true, length = 50)
-    private String country;
+    @Column(nullable = false)
+    private Double amount;
     
-    @Column(name = "[state]", nullable = true, length = 50)
-    private String state;
+    @Column(nullable = false)
+    private Double cost;
     
-    @Column(nullable = true, length = 50)
-    private String city;
+    @Column(name = "total_cost", nullable = false)
+    private Double totalCost;
     
-    @Column(nullable = true, length = 100)
-    private String address;
+    @Column(nullable = false)
+    private Integer quantity;
     
-    @Column(name = "postal_code", nullable = true, length = 8)
-    private String postalCode;
-    
-    @Column(nullable = true, length = 12)
-    private String phone;
-    
-    @Column
-    private Boolean deleted;
+    @Column(nullable = false)
+    private Integer deleted = 0;
     
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
@@ -79,25 +80,12 @@ public class Provider implements Serializable
     @Column(name = "updated_date")
     @Temporal(value = TemporalType.TIMESTAMP)
     private Calendar updatedDate;
+
+    public SalePromotionDetail() {}
     
-    public Provider() {}
-    
-    public Provider(Long id)
+    public SalePromotionDetail(Long id)
     {
         this.id = id;
-    }
-    
-    /**
-     * Método constructor de la clase
-     * @param code Código del módulo
-     * @param name Nombre del módulo
-     * @param description Descripción del módulo
-     */
-    public Provider(String code, String name, String description)
-    {
-        this.code = code;
-        this.name = name;
-        this.description = description;
     }
 
     public Long getId() {
@@ -108,83 +96,67 @@ public class Provider implements Serializable
         this.id = id;
     }
 
-    public String getCode() {
-        return code;
+    public Sale getSale() {
+        return sale;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setSale(Sale sale) {
+        this.sale = sale;
     }
 
-    public String getName() {
-        return name;
+    public Promotion getPromotion() {
+        return promotion;
+    }
+    
+    public void setPromotion(Promotion promotion) {
+        this.promotion = promotion;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Double getPrice() {
+        return price;
     }
 
-    public String getDescription() {
-        return description;
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public Double getAmount() {
+        return amount;
     }
 
-    public String getCountry() {
-        return country;
+    public void setAmount(Double amount) {
+        this.amount = amount;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public Double getCost() {
+        return cost;
     }
 
-    public String getState() {
-        return state;
+    public void setCost(Double cost) {
+        this.cost = cost;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public Double getTotalCost() {
+        return totalCost;
     }
 
-    public String getCity() {
-        return city;
+    public void setTotalCost(Double totalCost) {
+        this.totalCost = totalCost;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public Integer getQuantity() {
+        return quantity;
     }
 
-    public String getAddress() {
-        return address;
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public Boolean isDeleted() {
+    public Integer getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(Boolean deleted) {
+    public void setDeleted(Integer deleted) {
         this.deleted = deleted;
     }
 
@@ -223,10 +195,16 @@ public class Provider implements Serializable
     @Override
     public boolean equals(Object o)
     {
+        /*if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        
+        SalePromotionDetail that = (SalePromotionDetail) o;
+        return !(getSalePromotionDetailPk()!= null ? !getSalePromotionDetailPk().equals(
+            that.getSalePromotionDetailPk()) : that.getSalePromotionDetailPk() != null);/**/
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         
-        Provider that = (Provider) o;
+        SalePromotionDetail that = (SalePromotionDetail) o;
         return !(this.id != null ? !this.id.equals(that.getId())
             : that.getId() != null);
     }
@@ -235,13 +213,21 @@ public class Provider implements Serializable
     public int hashCode()
     {
         int hash = 3;
-        hash = 89 * hash + Objects.hashCode(this.id);
+        hash = 43 * hash + Objects.hashCode(this.id);
         return hash;
     }
-    
+
+    /*@Override
+    public int hashCode()
+    {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.salePromotionDetailPk);
+        return hash;
+    }/**/
+
     @Override
     public String toString() {
-        return "Provider: " + this.id + ", " + this.code + ", " + this.name + ", " + this.description;
+        return "SalesPromotionDetail: " + this.id + ", " + this.price + ", " + this.quantity + ", " + this.amount;
     }
-    
+
 }

@@ -11,7 +11,9 @@ package dis.software.pos.entities;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,6 +22,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -45,10 +49,13 @@ public class Product implements Serializable
     private String description;
     
     @Column
-    private Double price;
+    private Double cost;
     
     @Column
-    private Double cost;
+    private Double price;
+    
+    @Column(name = "out_of_time_price")
+    private Double outOfTimePrice;
     
     @Column
     private Double discount;
@@ -62,24 +69,26 @@ public class Product implements Serializable
     @Column(name = "min_stock_level")
     private Integer minStockLevel;
     
+    @Column(name = "min_stock_level_notified")
+    private Boolean minStockLevelNotified;
+    
     @Column(name = "image_path")
     private String imagePath;
     
     @Column
-    private Boolean required;
-    
-    @Column
     private Boolean deleted;
     
-    @Column(name = "created_by")
-    private Long createdBy;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private User createdBy;
     
     @Column(name = "created_date")
     @Temporal(value = TemporalType.TIMESTAMP)
     private Calendar createdDate = new GregorianCalendar();
     
-    @Column(name = "updated_by")
-    private Long updatedBy;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by")
+    private User updatedBy;
     
     @Column(name = "updated_date")
     @Temporal(value = TemporalType.TIMESTAMP)
@@ -96,6 +105,9 @@ public class Product implements Serializable
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id")
     private Provider provider;
+    
+    @OneToMany(mappedBy = "productUnitPk.product", fetch = FetchType.LAZY)
+    private Set<ProductUnit> productUnits = new HashSet<>();
     
     public Product() {}
     
@@ -149,6 +161,14 @@ public class Product implements Serializable
         this.description = description;
     }
 
+    public Double getCost() {
+        return cost;
+    }
+
+    public void setCost(Double cost) {
+        this.cost = cost;
+    }
+    
     public Double getPrice() {
         return price;
     }
@@ -157,12 +177,12 @@ public class Product implements Serializable
         this.price = price;
     }
 
-    public Double getCost() {
-        return cost;
+    public Double getOutOfTimePrice() {
+        return outOfTimePrice;
     }
 
-    public void setCost(Double cost) {
-        this.cost = cost;
+    public void setOutOfTimePrice(Double outOfTimePrice) {
+        this.outOfTimePrice = outOfTimePrice;
     }
 
     public Double getDiscount() {
@@ -197,6 +217,14 @@ public class Product implements Serializable
         this.minStockLevel = minStockLevel;
     }
 
+    public Boolean getMinStockLevelNotified() {
+        return minStockLevelNotified;
+    }
+
+    public void setMinStockLevelNotified(Boolean minStockLevelNotified) {
+        this.minStockLevelNotified = minStockLevelNotified;
+    }
+
     public String getImagePath() {
         return imagePath;
     }
@@ -204,28 +232,20 @@ public class Product implements Serializable
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
-    
-    public Boolean isRequired() {
-        return required;
-    }
-    
-    public void isRequired(Boolean required) {
-        this.required = required;
-    }
 
-    public Boolean isDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void isDeleted(Boolean deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
 
-    public Long getCreatedBy() {
+    public User getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(Long createdBy) {
+    public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -237,11 +257,11 @@ public class Product implements Serializable
         this.createdDate = createdDate;
     }
 
-    public Long getUpdatedBy() {
+    public User getUpdatedBy() {
         return updatedBy;
     }
 
-    public void setUpdatedBy(Long updatedBy) {
+    public void setUpdatedBy(User updatedBy) {
         this.updatedBy = updatedBy;
     }
 
@@ -275,6 +295,14 @@ public class Product implements Serializable
 
     public void setProvider(Provider provider) {
         this.provider = provider;
+    }
+
+    public Set<ProductUnit> getProductUnits() {
+        return productUnits;
+    }
+
+    public void setProductUnits(Set<ProductUnit> productUnits) {
+        this.productUnits = productUnits;
     }
     
     @Override
