@@ -9,22 +9,60 @@ package dis.software.pos.jforms;
 
 import dis.software.pos.Application;
 import dis.software.pos.ApplicationSession;
+import dis.software.pos.OptionPane;
 import dis.software.pos.entities.Provider;
 import dis.software.pos.interfaces.IProvider;
 import java.awt.Color;
 import javax.swing.JOptionPane;
+import javax.swing.WindowConstants;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Formulario para la creación de proveedores
  * @author Milton Cavazos
  */
-public class ProviderCreateJFrame extends javax.swing.JInternalFrame {
+public class ProviderCreateJFrame extends javax.swing.JInternalFrame
+{
+    
+    private static final Logger logger = LogManager.getLogger(ProviderCreateJFrame.class.getSimpleName());
 
     /**
      * Creación de nuevo formulario ProviderCreateJForm
      */
-    public ProviderCreateJFrame() {
+    public ProviderCreateJFrame()
+    {
+        
         initComponents();
+        
+        ProviderCreateJFrame frame = this;
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        frame.addInternalFrameListener(new InternalFrameAdapter()
+        {
+            @Override
+            public void internalFrameClosing(InternalFrameEvent e)
+            {
+                if (!jtxtCode.getText().isEmpty()
+                    && !jtxtName.getText().isEmpty())
+                {
+                    if (OptionPane.showConfirmDialog(frame,
+                        "<html>Los cambios efectuados aún no han sido guardados.<br>"
+                        + "¿Está seguro de que quiere continuar?</html>", " Cerrar ventana",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+                    {
+                        logger.info("Window closed");
+                        frame.dispose();
+                        return;
+                    }
+                    return;
+                }
+                logger.info("Window closed");
+                frame.dispose();
+            }
+        });
+        
     }
 
     /**
@@ -39,7 +77,6 @@ public class ProviderCreateJFrame extends javax.swing.JInternalFrame {
         jpanelHeader = new javax.swing.JPanel();
         jlblHeader = new javax.swing.JLabel();
         jbtnSave = new javax.swing.JButton();
-        jbtnCancel = new javax.swing.JButton();
         jsepHeader = new javax.swing.JSeparator();
         jtxtCode = new javax.swing.JTextField();
         jlblCode = new javax.swing.JLabel();
@@ -62,8 +99,8 @@ public class ProviderCreateJFrame extends javax.swing.JInternalFrame {
         jlblPhone = new javax.swing.JLabel();
 
         setClosable(true);
+        setIconifiable(true);
         setMaximizable(true);
-        setResizable(true);
         setTitle("Nuevo proveedor");
         setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
@@ -74,19 +111,15 @@ public class ProviderCreateJFrame extends javax.swing.JInternalFrame {
         jbtnSave.setBackground(new java.awt.Color(17, 157, 17));
         jbtnSave.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jbtnSave.setForeground(new java.awt.Color(255, 255, 255));
+        jbtnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/floppy-disk-w.png"))); // NOI18N
         jbtnSave.setText("Guardar");
         jbtnSave.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jbtnSave.setIconTextGap(8);
         jbtnSave.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jbtnSaveMouseClicked(evt);
             }
         });
-
-        jbtnCancel.setBackground(new java.awt.Color(204, 204, 204));
-        jbtnCancel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jbtnCancel.setForeground(new java.awt.Color(0, 0, 0));
-        jbtnCancel.setText("Cancelar");
-        jbtnCancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jpanelHeaderLayout = new javax.swing.GroupLayout(jpanelHeader);
         jpanelHeader.setLayout(jpanelHeaderLayout);
@@ -95,10 +128,8 @@ public class ProviderCreateJFrame extends javax.swing.JInternalFrame {
             .addGroup(jpanelHeaderLayout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addComponent(jlblHeader)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 241, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 326, Short.MAX_VALUE)
                 .addComponent(jbtnSave)
-                .addGap(18, 18, 18)
-                .addComponent(jbtnCancel)
                 .addContainerGap())
         );
         jpanelHeaderLayout.setVerticalGroup(
@@ -106,9 +137,8 @@ public class ProviderCreateJFrame extends javax.swing.JInternalFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpanelHeaderLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jpanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jbtnCancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jbtnSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jlblHeader))
+                    .addComponent(jlblHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jbtnSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -182,7 +212,7 @@ public class ProviderCreateJFrame extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jpanelHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
+                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jlblName)
                     .addComponent(jlblCode)
@@ -194,19 +224,19 @@ public class ProviderCreateJFrame extends javax.swing.JInternalFrame {
                     .addComponent(jlblState)
                     .addComponent(jlblCity))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jcboCountry, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jtxtDescription)
-                    .addComponent(jtxtPostalCode)
-                    .addComponent(jtxtCode, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
-                    .addComponent(jcboState, 0, 250, Short.MAX_VALUE)
-                    .addComponent(jcboCity, 0, 250, Short.MAX_VALUE)
-                    .addComponent(jtxtAddress, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jtxtName)
-                    .addComponent(jtxtPhone, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jtxtPostalCode, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jtxtAddress, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jcboCity, javax.swing.GroupLayout.Alignment.LEADING, 0, 200, Short.MAX_VALUE)
+                    .addComponent(jcboState, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jcboCountry, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jtxtDescription, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jtxtName, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jtxtCode, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jtxtPhone))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jchkAutoCode)
-                .addContainerGap(225, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jsepHeader))
@@ -219,42 +249,42 @@ public class ProviderCreateJFrame extends javax.swing.JInternalFrame {
                 .addComponent(jsepHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jtxtCode, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtxtCode, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlblCode)
                     .addComponent(jchkAutoCode))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jlblName)
-                    .addComponent(jtxtName, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(jtxtName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jtxtDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtxtDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlblDescription))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jcboCountry, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jcboCountry, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlblCountry))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jcboState, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jcboState, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlblState))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jcboCity, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jcboCity, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlblCity))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jtxtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtxtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlblAddress))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jtxtPostalCode, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtxtPostalCode, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlblPostalCode))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jtxtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtxtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlblPhone))
-                .addGap(0, 103, Short.MAX_VALUE))
+                .addGap(0, 109, Short.MAX_VALUE))
         );
 
         pack();
@@ -262,11 +292,15 @@ public class ProviderCreateJFrame extends javax.swing.JInternalFrame {
 
     private void jbtnSaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jbtnSaveMouseClicked
 
-        if (jtxtCode.getText().isEmpty() || jtxtName.getText().isEmpty())
+        if (jtxtCode.getText().isEmpty()
+            || jtxtName.getText().isEmpty())
         {
-            JOptionPane.showMessageDialog(this, "Por favor ingresa un código y un nombre para guardar el proveedor.");
+            OptionPane.showMessageDialog(this, "Ingrese los datos marcados con un asterisco "
+                + "para continuar.", " Guardar registro", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
+        
+        IProvider iProvider = Application.getContext().getBean(IProvider.class);
         
         Provider provider = new Provider(
             jtxtCode.getText(), jtxtName.getText(), jtxtDescription.getText());
@@ -276,32 +310,38 @@ public class ProviderCreateJFrame extends javax.swing.JInternalFrame {
         provider.setAddress(jtxtAddress.getText());
         provider.setPostalCode(jtxtPostalCode.getText());
         provider.setPhone(jtxtPhone.getText());
-        provider.setCreatedBy(ApplicationSession.getUser().getId());
+        provider.setCreatedBy(ApplicationSession.getUser());
 
-        IProvider iProvider = Application.getContext().getBean(IProvider.class);
         provider = iProvider.save(provider);
 
         if (provider.getId() != null)
         {
-            JOptionPane.showMessageDialog(this, "El proveedor se ha guardado exitosamente.");
+            OptionPane.showMessageDialog(this, "El registro se ha guardado exitosamente.",
+                " Guardar registro", OptionPane.SUCCESS_MESSAGE);
+            
+            jtxtCode.setText("");
+            jtxtCode.setEditable(true);
+            jtxtCode.setBackground(Color.WHITE);
+            jchkAutoCode.setSelected(false);
+            jtxtName.setText("");
+            jtxtDescription.setText("");
+            jcboCountry.setSelectedIndex(0);
+            jcboState.setSelectedIndex(0);
+            jcboCity.setSelectedIndex(0);
+            jtxtAddress.setText("");
+            jtxtPostalCode.setText("");
+            jtxtPhone.setText("");
         }
-
-        jtxtCode.setText("");
-        jtxtCode.setEditable(true);
-        jtxtCode.setBackground(Color.WHITE);
-        jchkAutoCode.setSelected(false);
-        jtxtName.setText("");
-        jtxtDescription.setText("");
-        jcboCountry.setSelectedIndex(0);
-        jcboState.setSelectedIndex(0);
-        jcboCity.setSelectedIndex(0);
-        jtxtAddress.setText("");
-        jtxtPostalCode.setText("");
-        jtxtPhone.setText("");
+        else
+        {
+            OptionPane.showMessageDialog(this, "Ha ocurrido un error al intentar guardar el registro.",
+                " Guardar registro", JOptionPane.ERROR_MESSAGE);
+        }
 
     }//GEN-LAST:event_jbtnSaveMouseClicked
 
     private void jchkAutoCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jchkAutoCodeActionPerformed
+        
         if (jchkAutoCode.isSelected())
         {
             IProvider iProvider = Application.getContext().getBean(IProvider.class);
@@ -313,11 +353,11 @@ public class ProviderCreateJFrame extends javax.swing.JInternalFrame {
         jtxtCode.setText("");
         jtxtCode.setEditable(true);
         jtxtCode.setBackground(Color.WHITE);
+        
     }//GEN-LAST:event_jchkAutoCodeActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jbtnCancel;
     private javax.swing.JButton jbtnSave;
     private javax.swing.JComboBox<String> jcboCity;
     private javax.swing.JComboBox<String> jcboCountry;

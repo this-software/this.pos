@@ -5,17 +5,28 @@
  */
 package dis.software.pos.jforms;
 
-import dis.software.pos.Crypt;
+import com.google.gson.Gson;
 import dis.software.pos.Application;
 import dis.software.pos.ApplicationSession;
-import dis.software.pos.controllers.UserService;
+import dis.software.pos.ApplicationSound;
+import dis.software.pos.Crypt;
+import dis.software.pos.OptionPane;
+import dis.software.pos.entities.Setting;
 import dis.software.pos.entities.User;
-import javax.swing.JOptionPane;
-import dis.software.pos.interfaces.IUserService;
-import java.awt.event.KeyAdapter;
+import dis.software.pos.interfaces.IUser;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.security.InvalidKeyException;
-import java.util.Arrays;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JRootPane;
+import javax.swing.KeyStroke;
+import javax.swing.WindowConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,27 +44,107 @@ public class LoginJFrame extends javax.swing.JFrame
      */
     public LoginJFrame()
     {
+        
         initComponents();
         
-        KeyAdapter keyAdapter = new KeyAdapter()
+        LoginJFrame frame = this;
+        frame.addWindowListener(new WindowAdapter()
         {
             @Override
-            public void keyPressed(KeyEvent e)
+            public void windowClosing(WindowEvent e)
             {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER)
-                {
-                    logIn();
-                }
+                exit();
             }
-        };
+        });
         
-        LoginJFrame loginJFrame = this;
-        loginJFrame.addKeyListener(keyAdapter);
-        jtxtUser.addKeyListener(keyAdapter);
-        jtxtPassword.addKeyListener(keyAdapter);
+        JRootPane jRootPane = super.getRootPane();
         
-        logger.info("User getting ready to log in");
+        jRootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "ENTER");
+        jRootPane.getActionMap().put("ENTER", new AbstractAction()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+               login();
+            }
+        });
+        
+        logger.info("Login window loaded.");
+        
     }
+    
+    @Override
+    public void setDefaultCloseOperation(int operation)
+    {
+        super.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+    }
+    
+    //<editor-fold defaultstate="collapsed" desc="Método para iniciar sesión">
+    private void login()
+    {
+        
+        String username = jtxtUser.getText();
+        char[] password = jtxtPassword.getPassword();
+        if (!username.isEmpty() && password.length != 0)
+        {
+            IUser iUser = Application.getContext().getBean(IUser.class);
+            User user = iUser.getUser(username);
+            if (user == null)
+            {
+                OptionPane.showMessageDialog(this, "Ingrese un usuario válido para continuar.",
+                    " Ingresar al sistema", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            if (!user.getPassword().equals(
+                Crypt.encrypt(new String(password), user.getSalt())))
+            {
+                OptionPane.showMessageDialog(this, "Contraseña incorrecta.",
+                    " Ingresar al sistema", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            logger.info("Property (user.dir) : ".concat(System.getProperty("user.dir")));
+            //Se cargan los datos de configuración del sistema
+            Gson gson = new Gson();
+            try (Reader reader = new FileReader(
+                System.getProperty("user.dir").concat(Setting.FILE_NAME)))
+            {
+                Setting setting = gson.fromJson(reader, Setting.class);
+                //Se cargan los datos de configuración de la aplicación
+                Application.setSetting(setting);
+                logger.info("Setting JSON file read.");
+            }
+            catch (IOException e)
+            {
+                logger.error("Error reading setting JSON file", e);
+            }
+            ApplicationSound.start();
+            //Se cargan los datos de usuario en sesión
+            ApplicationSession.setUser(user);
+            //Se inicia la pantalla principal del sistema
+            MainJFrame mainJFrame = new MainJFrame();
+            mainJFrame.setVisible(true);
+            //Se oculta formulario de inicio de sesión
+            dispose();
+        }
+        
+    }
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Método para salir del sistema">
+    private void exit()
+    {
+        
+        if (OptionPane.showConfirmDialog(this, "¿Está seguro de que quiere salir del sistema?",
+            " Mensaje del sistema", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
+            == JOptionPane.YES_OPTION)
+        {
+            logger.info("¿Window closed? ¡YES!");
+            System.exit(0);
+        }
+        
+    }
+    //</editor-fold>
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -267,90 +358,47 @@ public class LoginJFrame extends javax.swing.JFrame
 
     private void jbtnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnLoginActionPerformed
         
-        logIn();
+        login();
         
     }//GEN-LAST:event_jbtnLoginActionPerformed
 
     private void jbtnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnCancelActionPerformed
         
-        int confirmed = JOptionPane.showConfirmDialog(this, "¿Estás seguro que deseas salir del sistema?",
-            "Seleccionar una opción", JOptionPane.YES_NO_OPTION);
-        if (confirmed == JOptionPane.YES_OPTION) {
-            System.exit(0);
-        }
+        exit();
         
     }//GEN-LAST:event_jbtnCancelActionPerformed
 
-    private void logIn()
+    public static void main(String args[])
     {
-        
-        String username = jtxtUser.getText();
-        char[] password = jtxtPassword.getPassword();
-        if (!username.isEmpty() && password.length != 0)
-        {
-            try
-            {
-                IUserService iUser = Application.getContext().getBean(UserService.class);
-                User user = iUser.getUser(username);
-                if (user == null)
-                {
-                    JOptionPane.showMessageDialog(this, "Ingresa un usuario válido, por favor.",
-                        "Mensaje del sistema", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                if (!user.getPassword().equals(
-                    Crypt.encrypt(new String(password), user.getSalt().getBytes())))
-                {
-                    JOptionPane.showMessageDialog(this, "Contraseña incorrecta.", "Mensaje del sistema",
-                        JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                
-                ApplicationSession.setUser(user);
-
-                MainJFrame mainJFrame = new MainJFrame();
-                mainJFrame.setVisible(true);
-                this.dispose();
-                
-            } catch (InvalidKeyException ex) {
-                logger.error("Error validating the password", ex);
-            }
-        }
-        
-    }
-    
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+        try
+        {
+            for (javax.swing.UIManager.LookAndFeelInfo info
+                : javax.swing.UIManager.getInstalledLookAndFeels())
+            {
+                if ("Nimbus".equals(info.getName()))
+                {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(LoginJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(LoginJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(LoginJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(LoginJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        catch (ClassNotFoundException
+            | InstantiationException
+            | IllegalAccessException
+            | javax.swing.UnsupportedLookAndFeelException ex)
+        {
+            logger.error(ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new LoginJFrame().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new LoginJFrame().setVisible(true);
         });
     }
 

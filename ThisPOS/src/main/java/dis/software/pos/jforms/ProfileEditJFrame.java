@@ -7,26 +7,31 @@ package dis.software.pos.jforms;
 
 import dis.software.pos.Application;
 import dis.software.pos.ApplicationSession;
+import dis.software.pos.OptionPane;
 import dis.software.pos.Property;
 import dis.software.pos.combobox.model.ProfileComboBoxModel;
 import dis.software.pos.combobox.renderers.ProfileComboBoxRenderer;
-import dis.software.pos.entities.Module;
-import dis.software.pos.entities.Privileges;
 import dis.software.pos.entities.Profile;
 import dis.software.pos.entities.ProfileModule;
-import dis.software.pos.entities.ProfileModulePk;
 import dis.software.pos.interfaces.IProfile;
-import dis.software.pos.interfaces.IProfileModule;
 import dis.software.pos.table.model.ProfileModuleTableModel;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ItemEvent;
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Formulario para la modificación de perfiles
@@ -34,13 +39,102 @@ import javax.swing.JTable;
  */
 public class ProfileEditJFrame extends javax.swing.JInternalFrame
 {
+    
+    private static final Logger logger = LogManager.getLogger(ProfileEditJFrame.class.getSimpleName());
+    
+    private Profile profile1 = null;
+    
+    /**
+     * Creación de nuevo formulario ProfileEditJFrame
+     * @param profile
+     */
+    public ProfileEditJFrame(Profile profile)
+    {
+        
+        this.profile1 = profile;
+        init();
+        
+    }
 
     /**
      * Creación de nuevo formulario ProfileEditJFrame
      */
     public ProfileEditJFrame()
     {
+        
+        init();
+        
+    }
+    
+    private void init()
+    {
+        
         initComponents();
+        
+        ProfileEditJFrame frame = this;
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        frame.addInternalFrameListener(new InternalFrameAdapter()
+        {
+            @Override
+            public void internalFrameClosing(InternalFrameEvent e)
+            {
+                if (profile1 == null)
+                {
+                    logger.info("Window closed");
+                    frame.dispose();
+                    return;
+                }
+                //Si el código de perfil
+                if (!jtxtCode.getText().equals(profile1.getCode())
+                    //El nombre de perfil
+                    || !jtxtName.getText().equals(profile1.getName())
+                    //O la descripción de perfil han cambiado, entonces:
+                    || !jtxtDescription.getText().equals(profile1.getDescription()))
+                {
+                    if (OptionPane.showConfirmDialog(frame,
+                        "<html>Los cambios efectuados aún no han sido guardados.<br>"
+                        + "¿Está seguro de que quiere continuar?</html>", " Cerrar ventana",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+                    {
+                        logger.info("Window closed");
+                        frame.dispose();
+                        return;
+                    }
+                    return;
+                }
+                logger.info("Window closed");
+                frame.dispose();
+            }
+        });
+        
+        jtablePrivileges.setModel(new ProfileModuleTableModel());
+        jtablePrivileges.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+        //Se habilitan las lineas horizontales para distinguir los registros
+        jtablePrivileges.setShowHorizontalLines(Boolean.TRUE);
+        jtablePrivileges.setGridColor(new Color(179, 179, 179));
+        
+        //Se eliminan columnas innecesarias para esta vista
+        jtablePrivileges.getColumnModel().removeColumn(jtablePrivileges.getColumnModel().getColumn(
+            jtablePrivileges.convertColumnIndexToView(ProfileModuleTableModel.COLUMN_MOD_ID)));
+        
+        jtablePrivileges.addPropertyChangeListener((PropertyChangeEvent evt) ->
+        {
+            if ("tableCellEditor".equals(evt.getPropertyName()))
+            {
+                if (!jtablePrivileges.isEditing())
+                {
+                    ProfileModuleTableModel profileModuleTableModel =
+                            (ProfileModuleTableModel) jtablePrivileges.getModel();
+                    jchkViewAll.setSelected(profileModuleTableModel.getAll().stream()
+                        .allMatch(pm -> pm.getPrivileges().getViewProperty() == Property.ALLOW));
+                    jchkCreateEditAll.setSelected(profileModuleTableModel.getAll().stream()
+                        .allMatch(pm -> pm.getPrivileges().getCreateProperty() == Property.ALLOW
+                            && pm.getPrivileges().getEditProperty() == Property.ALLOW));
+                }
+            }
+        });
+        
+        ((JComponent) jtablePrivileges.getDefaultRenderer(Boolean.class)).setOpaque(true);
 
         IProfile iProfile = Application.getContext().getBean(IProfile.class);
         List<Profile> list = iProfile.findAll();
@@ -50,36 +144,55 @@ public class ProfileEditJFrame extends javax.swing.JInternalFrame
 
         jcboProfile.addItemListener((ItemEvent e) ->
         {
-            //Objeto afectado por el evento
-            if (!(e.getItem() instanceof Profile))
+            if (e.getStateChange() == ItemEvent.SELECTED)
             {
-                jtxtCode.setText("");
-                jtxtName.setText("");
-                jtxtDescription.setText("");
-                for (int i = 0; i < jtablePrivileges.getModel().getRowCount(); i++)
+                //Objeto afectado por el evento
+                Profile profile = (Profile) e.getItem();
+                if (profile.getId() == null)
                 {
-                    jtablePrivileges.setValueAt(Boolean.FALSE, i, 2);
-                    jtablePrivileges.setValueAt(Boolean.FALSE, i, 3);
-                    jtablePrivileges.setValueAt(Boolean.FALSE, i, 4);
-                    jtablePrivileges.setValueAt(Boolean.FALSE, i, 5);
+                    jtxtCode.setText("");
+                    jtxtName.setText("");
+                    jtxtDescription.setText("");
+                    ProfileModuleTableModel profileModuleTableModel =
+                        (ProfileModuleTableModel) jtablePrivileges.getModel();
+                    profileModuleTableModel.getAll().forEach(profileModule ->
+                    {
+                        profileModule.getPrivileges().setViewProperty(Property.DENY);
+                        profileModule.getPrivileges().setCreateProperty(Property.DENY);
+                        profileModule.getPrivileges().setEditProperty(Property.DENY);
+                        profileModule.getPrivileges().setDeleteProperty(Property.DENY);
+                    });
+                    profileModuleTableModel.fireTableDataChanged();
+                    return;
                 }
-                return;
-            }
-            Profile profile = (Profile) e.getItem();
-            if (e.getStateChange() == ItemEvent.SELECTED
-                && profile.getId() != null)
-            {
+                
                 jtxtCode.setText(profile.getCode());
                 jtxtName.setText(profile.getName());
                 jtxtDescription.setText(profile.getDescription());
                 
-                Set<ProfileModule> profileModules = profile.getProfileModules();
-                jtablePrivileges.setModel(new ProfileModuleTableModel(new ArrayList<>(profileModules)));
+                List<ProfileModule> profileModules = new ArrayList<>(profile.getProfileModules());
+                jtablePrivileges.setModel(new ProfileModuleTableModel(
+                    //Se ordena la lista por nombre del modulo
+                    profileModules.stream().sorted((obj1, obj2) -> obj1.getModule().getName().compareTo(
+                        obj2.getModule().getName())).collect(Collectors.toList())));
                 
-                ((JComponent) jtablePrivileges.getDefaultRenderer(Boolean.class)).setOpaque(true);
-        
-                jtablePrivileges.getTableHeader().setFont(new Font("Segoe UI", Font.PLAIN, 14));
-                jtablePrivileges.getColumnModel().removeColumn(jtablePrivileges.getColumnModel().getColumn(0));
+                //Si todos los modulos del perfil tienen privilegio "Ver" asignado
+                if (profileModules.stream()
+                    .allMatch(pm -> pm.getPrivileges().getViewProperty() == Property.ALLOW))
+                {
+                    jchkViewAll.setSelected(Boolean.TRUE);
+                }
+                //Si todos los modulos del perfil tienen privilegio "Crear" y "Editar" asignado
+                if (profileModules.stream()
+                    .allMatch(pm -> pm.getPrivileges().getCreateProperty() == Property.ALLOW
+                        && pm.getPrivileges().getEditProperty() == Property.ALLOW));
+                {
+                    jchkCreateEditAll.setSelected(Boolean.TRUE);
+                }
+                
+                //Se eliminan columnas innecesarias para esta vista
+                jtablePrivileges.getColumnModel().removeColumn(jtablePrivileges.getColumnModel().getColumn(
+                    jtablePrivileges.convertColumnIndexToView(ProfileModuleTableModel.COLUMN_MOD_ID)));
 
                 jtablePrivileges.getColumnModel().getColumn(0).setMinWidth(150);
                 jtablePrivileges.getColumnModel().getColumn(0).setMaxWidth(150);
@@ -91,11 +204,78 @@ public class ProfileEditJFrame extends javax.swing.JInternalFrame
                 jtablePrivileges.getColumnModel().getColumn(4).setMaxWidth(80);
                 jtablePrivileges.getColumnModel().getColumn(5).setMinWidth(80);
                 jtablePrivileges.getColumnModel().getColumn(5).setMaxWidth(80);
+                
                 jtablePrivileges.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
             }
         });
         
+        SwingUtilities.invokeLater(() ->
+        {
+            if (profile1 != null)
+            {
+                jcboProfile.setSelectedItem(profile1);
+            }
+        });
+        
     }
+    
+    //<editor-fold defaultstate="collapsed" desc="Método para modificar un registro">
+    private void edit()
+    {
+        
+        ProfileModuleTableModel profileModuleTableModel =
+            (ProfileModuleTableModel) jtablePrivileges.getModel();
+        
+        if (jtxtCode.getText().isEmpty()
+            || jtxtName.getText().isEmpty())
+        {
+            OptionPane.showMessageDialog(this, "Ingrese los datos marcados con un asterisco "
+                + "para continuar.", " Guardar registro", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        
+        IProfile iProfile = Application.getContext().getBean(IProfile.class);
+        
+        Profile profile = (Profile) jcboProfile.getSelectedItem();
+        profile.setCode(jtxtCode.getText());
+        profile.setName(jtxtName.getText());
+        profile.setDescription(jtxtDescription.getText());
+        profile.setUpdatedBy(ApplicationSession.getUser());
+        profile.setUpdatedDate(new GregorianCalendar());
+        
+        iProfile.update(profile);
+
+        if (profile.getId() != null)
+        {
+            OptionPane.showMessageDialog(this, "El registro se ha actualizado exitosamente.",
+                " Guardar registro", OptionPane.SUCCESS_MESSAGE);
+            
+            List<Profile> list = iProfile.findAll();
+            list.add(0, new Profile("", "Elige un perfil", ""));
+            jcboProfile.setModel(new ProfileComboBoxModel(list));
+            
+            jtxtCode.setText("");
+            jtxtName.setText("");
+            jtxtDescription.setText("");
+            jchkViewAll.setSelected(false);
+            jchkCreateEditAll.setSelected(false);
+            profileModuleTableModel.getAll().forEach(profileModule ->
+            {
+                profileModule.getPrivileges().setViewProperty(Property.DENY);
+                profileModule.getPrivileges().setCreateProperty(Property.DENY);
+                profileModule.getPrivileges().setEditProperty(Property.DENY);
+                profileModule.getPrivileges().setDeleteProperty(Property.DENY);
+            });
+            profileModuleTableModel.fireTableDataChanged();
+        }
+        else
+        {
+            OptionPane.showMessageDialog(this, "Ha ocurrido un error al intentar actualizar el registro.",
+                " Guardar registro", JOptionPane.ERROR_MESSAGE);
+        }
+        
+    }
+    //</editor-fold>
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -109,7 +289,6 @@ public class ProfileEditJFrame extends javax.swing.JInternalFrame
         jpanelHeader = new javax.swing.JPanel();
         jlblHeader = new javax.swing.JLabel();
         jbtnSave = new javax.swing.JButton();
-        jbtnCancel = new javax.swing.JButton();
         jsepHeader = new javax.swing.JSeparator();
         jcboProfile = new javax.swing.JComboBox<>();
         jlblProfile = new javax.swing.JLabel();
@@ -128,6 +307,8 @@ public class ProfileEditJFrame extends javax.swing.JInternalFrame
         jtablePrivileges = new javax.swing.JTable();
 
         setClosable(true);
+        setIconifiable(true);
+        setMaximizable(true);
         setTitle("Modificar perfiles");
         setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
@@ -138,19 +319,15 @@ public class ProfileEditJFrame extends javax.swing.JInternalFrame
         jbtnSave.setBackground(new java.awt.Color(17, 157, 17));
         jbtnSave.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jbtnSave.setForeground(new java.awt.Color(255, 255, 255));
+        jbtnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/floppy-disk-w.png"))); // NOI18N
         jbtnSave.setText("Guardar");
         jbtnSave.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jbtnSave.setIconTextGap(8);
         jbtnSave.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jbtnSaveMouseClicked(evt);
             }
         });
-
-        jbtnCancel.setBackground(new java.awt.Color(204, 204, 204));
-        jbtnCancel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jbtnCancel.setForeground(new java.awt.Color(0, 0, 0));
-        jbtnCancel.setText("Cancelar");
-        jbtnCancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jpanelHeaderLayout = new javax.swing.GroupLayout(jpanelHeader);
         jpanelHeader.setLayout(jpanelHeaderLayout);
@@ -161,8 +338,6 @@ public class ProfileEditJFrame extends javax.swing.JInternalFrame
                 .addComponent(jlblHeader)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jbtnSave)
-                .addGap(18, 18, 18)
-                .addComponent(jbtnCancel)
                 .addContainerGap())
         );
         jpanelHeaderLayout.setVerticalGroup(
@@ -170,9 +345,8 @@ public class ProfileEditJFrame extends javax.swing.JInternalFrame
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpanelHeaderLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jpanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jbtnCancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jbtnSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jlblHeader))
+                    .addComponent(jlblHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jbtnSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -227,12 +401,12 @@ public class ProfileEditJFrame extends javax.swing.JInternalFrame
 
         jlblCreateEditAll.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jlblCreateEditAll.setForeground(new java.awt.Color(0, 0, 0));
-        jlblCreateEditAll.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/glyphicons-196-info-sign.png"))); // NOI18N
+        jlblCreateEditAll.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/info-sign-b.png"))); // NOI18N
         jlblCreateEditAll.setText("Puede crear y modificar toda la información de los módulos.");
 
         jlblViewAll.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jlblViewAll.setForeground(new java.awt.Color(0, 0, 0));
-        jlblViewAll.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/glyphicons-196-info-sign.png"))); // NOI18N
+        jlblViewAll.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/info-sign-b.png"))); // NOI18N
         jlblViewAll.setText("Puede ver toda la información de los módulos.");
         jlblViewAll.setToolTipText("");
 
@@ -285,19 +459,19 @@ public class ProfileEditJFrame extends javax.swing.JInternalFrame
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jpanelHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
+                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jlblDescription)
                     .addComponent(jlblName)
                     .addComponent(jlblCode)
                     .addComponent(jlblProfile))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jcboProfile, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jtxtDescription)
-                    .addComponent(jtxtCode, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
-                    .addComponent(jtxtName))
-                .addContainerGap(340, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jtxtName, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jtxtCode, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jcboProfile, javax.swing.GroupLayout.Alignment.LEADING, 0, 200, Short.MAX_VALUE)
+                    .addComponent(jtxtDescription))
+                .addContainerGap(437, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -317,24 +491,24 @@ public class ProfileEditJFrame extends javax.swing.JInternalFrame
                 .addComponent(jsepHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jcboProfile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jcboProfile, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlblProfile))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jtxtCode, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtxtCode, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlblCode))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jlblName)
-                    .addComponent(jtxtName, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(19, 19, 19)
+                    .addComponent(jtxtName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jlblDescription)
-                    .addComponent(jtxtDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jtxtDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jpaneOptions, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jscrollPaneTable, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jscrollPaneTable, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -345,98 +519,42 @@ public class ProfileEditJFrame extends javax.swing.JInternalFrame
 
     private void jbtnSaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jbtnSaveMouseClicked
 
-        if (jtxtCode.getText().isEmpty() || jtxtName.getText().isEmpty())
-        {
-            JOptionPane.showMessageDialog(this, "Por favor ingresa un código y un nombre para guardar el perfil.");
-            return;
-        }
-        Profile profile = (Profile) jcboProfile.getSelectedItem();
-        //profile.setCode(jtxtCode.getText());
-        profile.setName(jtxtName.getText());
-        profile.setDescription(jtxtDescription.getText());
-        profile.setUpdatedBy(ApplicationSession.getUser().getId());
-        profile.setUpdatedDate(new Date());
+        edit();
         
-        IProfile iProfile = Application.getContext().getBean(IProfile.class);
-        iProfile.update(profile);
-        iProfile.flush();
-
-        for (int i = 0; i < jtablePrivileges.getModel().getRowCount(); i++)
-        {
-            //Se asigna la llave primaria
-            ProfileModulePk profileModulePk = new ProfileModulePk();
-            profileModulePk.setProfile(profile);
-            profileModulePk.setModule(new Module((Long) jtablePrivileges.getModel().getValueAt(i, 0)));
-            
-            //Se asignan los privilegios por cada módulo
-            Privileges privilege = new Privileges();
-            privilege.setViewProperty((Boolean) jtablePrivileges.getModel().getValueAt(i, 3)
-                ? Property.ALLOW : Property.DENY);
-            privilege.setCreateProperty((Boolean) jtablePrivileges.getModel().getValueAt(i, 4)
-                ? Property.ALLOW : Property.DENY);
-            privilege.setEditProperty((Boolean) jtablePrivileges.getModel().getValueAt(i, 5)
-                ? Property.ALLOW : Property.DENY);
-            privilege.setDeleteProperty((Boolean) jtablePrivileges.getModel().getValueAt(i, 6)
-                ? Property.ALLOW : Property.DENY);
-            
-            ProfileModule profileModule = new ProfileModule();
-            profileModule.setProfileModulePk(profileModulePk);
-            profileModule.setPrivileges(privilege);
-
-            IProfileModule iProfileModule = Application.getContext().getBean(IProfileModule.class);
-            iProfileModule.update(profileModule);
-        }
-
-        if (profile.getId() != null)
-        {
-            JOptionPane.showMessageDialog(this, "El perfil se ha actualizado exitosamente.");
-            
-            List<Profile> list = iProfile.findAll();
-            list.add(0, new Profile("", "Elige un perfil", ""));
-            jcboProfile.setModel(new ProfileComboBoxModel(list));
-            
-            jtxtCode.setText("");
-            jtxtName.setText("");
-            jtxtDescription.setText("");
-            for (int i = 0; i < jtablePrivileges.getModel().getRowCount(); i++)
-            {
-                jtablePrivileges.setValueAt(Boolean.FALSE, i, 2);
-                jtablePrivileges.setValueAt(Boolean.FALSE, i, 3);
-                jtablePrivileges.setValueAt(Boolean.FALSE, i, 4);
-                jtablePrivileges.setValueAt(Boolean.FALSE, i, 5);
-            }
-        }
     }//GEN-LAST:event_jbtnSaveMouseClicked
 
     private void jchkViewAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jchkViewAllActionPerformed
-        if (jchkViewAll.isSelected()) {
-            for (int i = 0; i < jtablePrivileges.getModel().getRowCount(); i++) {
-                jtablePrivileges.setValueAt(Boolean.TRUE, i, 2);
-            }
-            return;
-        }
-        for (int i = 0; i < jtablePrivileges.getModel().getRowCount(); i++) {
-            jtablePrivileges.setValueAt(Boolean.FALSE, i, 2);
-        }
+        
+        ProfileModuleTableModel profileModuleTableModel =
+            (ProfileModuleTableModel) jtablePrivileges.getModel();
+        
+        profileModuleTableModel.getAll().forEach(profileModule ->
+        {
+            profileModule.getPrivileges().setViewProperty(
+                jchkViewAll.isSelected() ? Property.ALLOW : Property.DENY);
+        });
+        profileModuleTableModel.fireTableDataChanged();
+        
     }//GEN-LAST:event_jchkViewAllActionPerformed
 
     private void jchkCreateEditAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jchkCreateEditAllActionPerformed
-        if (jchkCreateEditAll.isSelected()) {
-            for (int i = 0; i < jtablePrivileges.getModel().getRowCount(); i++) {
-                jtablePrivileges.setValueAt(Boolean.TRUE, i, 3);
-                jtablePrivileges.setValueAt(Boolean.TRUE, i, 4);
-            }
-            return;
-        }
-        for (int i = 0; i < jtablePrivileges.getModel().getRowCount(); i++) {
-            jtablePrivileges.setValueAt(Boolean.FALSE, i, 3);
-            jtablePrivileges.setValueAt(Boolean.FALSE, i, 4);
-        }
+        
+        ProfileModuleTableModel profileModuleTableModel =
+            (ProfileModuleTableModel) jtablePrivileges.getModel();
+        
+        profileModuleTableModel.getAll().forEach(profileModule ->
+        {
+            profileModule.getPrivileges().setCreateProperty(
+                jchkCreateEditAll.isSelected() ? Property.ALLOW : Property.DENY);
+            profileModule.getPrivileges().setEditProperty(
+                jchkCreateEditAll.isSelected() ? Property.ALLOW : Property.DENY);
+        });
+        profileModuleTableModel.fireTableDataChanged();
+        
     }//GEN-LAST:event_jchkCreateEditAllActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jbtnCancel;
     private javax.swing.JButton jbtnSave;
     private javax.swing.JComboBox<Profile> jcboProfile;
     private javax.swing.JCheckBox jchkCreateEditAll;

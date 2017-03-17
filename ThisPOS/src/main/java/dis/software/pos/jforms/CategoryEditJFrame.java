@@ -9,14 +9,21 @@ package dis.software.pos.jforms;
 
 import dis.software.pos.Application;
 import dis.software.pos.ApplicationSession;
+import dis.software.pos.OptionPane;
 import dis.software.pos.combobox.model.CategoryComboBoxModel;
 import dis.software.pos.combobox.renderers.CategoryComboBoxRenderer;
 import dis.software.pos.entities.Category;
 import dis.software.pos.interfaces.ICategory;
 import java.awt.event.ItemEvent;
-import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Formulario para la modificación de categorías
@@ -24,13 +31,73 @@ import javax.swing.JOptionPane;
  */
 public class CategoryEditJFrame extends javax.swing.JInternalFrame
 {
+    
+    private static final Logger logger = LogManager.getLogger(CategoryEditJFrame.class.getSimpleName());
+    
+    private Category category1 = null;
+    
+    /**
+     * Creación de nuevo formulario ProductEditJFrame
+     * @param category
+     */
+    public CategoryEditJFrame(Category category)
+    {
+        
+        this.category1 = category;
+        init();
+        
+    }
 
     /**
-     * Creación de nuevo formulario CategoryEditJFrame
+     * Creación de nuevo formulario ProductEditJFrame
      */
     public CategoryEditJFrame()
     {
+        
+        init();
+        
+    }
+
+    private void init()
+    {
+        
         initComponents();
+        
+        CategoryEditJFrame frame = this;
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        frame.addInternalFrameListener(new InternalFrameAdapter()
+        {
+            @Override
+            public void internalFrameClosing(InternalFrameEvent e)
+            {
+                if (category1 == null)
+                {
+                    logger.info("Window closed");
+                    frame.dispose();
+                    return;
+                }
+                //Si el código de categoria
+                if (!jtxtCode.getText().equals(category1.getCode())
+                    //El nombre de categoria
+                    || !jtxtName.getText().equals(category1.getName())
+                    //O la descripción de categoria han cambiado, entonces:
+                    || !jtxtDescription.getText().equals(category1.getDescription()))
+                {
+                    if (OptionPane.showConfirmDialog(frame,
+                        "<html>Los cambios efectuados aún no han sido guardados.<br>"
+                        + "¿Está seguro de que quiere continuar?</html>", " Cerrar ventana",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+                    {
+                        logger.info("Window closed");
+                        frame.dispose();
+                        return;
+                    }
+                    return;
+                }
+                logger.info("Window closed");
+                frame.dispose();
+            }
+        });
         
         ICategory iCategory = Application.getContext().getBean(ICategory.class);
         List<Category> list = iCategory.findAll();
@@ -40,23 +107,31 @@ public class CategoryEditJFrame extends javax.swing.JInternalFrame
 
         jcboCategory.addItemListener((ItemEvent e) ->
         {
-            //Objeto afectado por el evento
-            if (!(e.getItem() instanceof Category))
+            if (e.getStateChange() == ItemEvent.SELECTED)
             {
-                jtxtCode.setText("");
-                jtxtName.setText("");
-                jtxtDescription.setText("");
-                return;
-            }
-            Category category = (Category) e.getItem();
-            if (e.getStateChange() == ItemEvent.SELECTED
-                && category.getId() != null)
-            {
+                //Objeto afectado por el evento
+                Category category = (Category) e.getItem();
+                if (category.getId() == null)
+                {
+                    jtxtCode.setText("");
+                    jtxtName.setText("");
+                    jtxtDescription.setText("");
+                    return;
+                }
                 jtxtCode.setText(category.getCode());
                 jtxtName.setText(category.getName());
                 jtxtDescription.setText(category.getDescription());
             }
         });
+        
+        SwingUtilities.invokeLater(() ->
+        {
+            if (category1 != null)
+            {
+                jcboCategory.setSelectedItem(category1);
+            }
+        });
+        
     }
 
     /**
@@ -71,7 +146,6 @@ public class CategoryEditJFrame extends javax.swing.JInternalFrame
         jpanelHeader = new javax.swing.JPanel();
         jlblHeader = new javax.swing.JLabel();
         jbtnSave = new javax.swing.JButton();
-        jbtnCancel = new javax.swing.JButton();
         jsepHeader = new javax.swing.JSeparator();
         jcboCategory = new javax.swing.JComboBox<>();
         jlblCategory = new javax.swing.JLabel();
@@ -83,6 +157,8 @@ public class CategoryEditJFrame extends javax.swing.JInternalFrame
         jlblDescription = new javax.swing.JLabel();
 
         setClosable(true);
+        setIconifiable(true);
+        setMaximizable(true);
         setTitle("Modificar categorías");
 
         jlblHeader.setFont(new java.awt.Font("Segoe UI", 1, 26)); // NOI18N
@@ -92,19 +168,15 @@ public class CategoryEditJFrame extends javax.swing.JInternalFrame
         jbtnSave.setBackground(new java.awt.Color(17, 157, 17));
         jbtnSave.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jbtnSave.setForeground(new java.awt.Color(255, 255, 255));
+        jbtnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/floppy-disk-w.png"))); // NOI18N
         jbtnSave.setText("Guardar");
         jbtnSave.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jbtnSave.setIconTextGap(8);
         jbtnSave.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jbtnSaveMouseClicked(evt);
             }
         });
-
-        jbtnCancel.setBackground(new java.awt.Color(204, 204, 204));
-        jbtnCancel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jbtnCancel.setForeground(new java.awt.Color(0, 0, 0));
-        jbtnCancel.setText("Cancelar");
-        jbtnCancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jpanelHeaderLayout = new javax.swing.GroupLayout(jpanelHeader);
         jpanelHeader.setLayout(jpanelHeaderLayout);
@@ -113,10 +185,8 @@ public class CategoryEditJFrame extends javax.swing.JInternalFrame
             .addGroup(jpanelHeaderLayout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addComponent(jlblHeader)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 318, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jbtnSave)
-                .addGap(18, 18, 18)
-                .addComponent(jbtnCancel)
                 .addContainerGap())
         );
         jpanelHeaderLayout.setVerticalGroup(
@@ -124,9 +194,8 @@ public class CategoryEditJFrame extends javax.swing.JInternalFrame
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpanelHeaderLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jpanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jbtnCancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jbtnSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jlblHeader))
+                    .addComponent(jlblHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jbtnSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -160,19 +229,19 @@ public class CategoryEditJFrame extends javax.swing.JInternalFrame
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jpanelHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
+                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jlblDescription)
                     .addComponent(jlblName)
                     .addComponent(jlblCode)
                     .addComponent(jlblCategory))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jcboCategory, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jtxtDescription)
-                    .addComponent(jtxtCode)
-                    .addComponent(jtxtName, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jtxtName, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jtxtCode, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jcboCategory, javax.swing.GroupLayout.Alignment.LEADING, 0, 200, Short.MAX_VALUE)
+                    .addComponent(jtxtDescription))
+                .addContainerGap(411, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jsepHeader)
@@ -186,21 +255,21 @@ public class CategoryEditJFrame extends javax.swing.JInternalFrame
                 .addComponent(jsepHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jcboCategory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jcboCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlblCategory))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jtxtCode, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtxtCode, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlblCode))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jlblName)
-                    .addComponent(jtxtName, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(19, 19, 19)
+                    .addComponent(jtxtName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jlblDescription)
-                    .addComponent(jtxtDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 316, Short.MAX_VALUE))
+                    .addComponent(jtxtDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 319, Short.MAX_VALUE))
         );
 
         pack();
@@ -208,26 +277,29 @@ public class CategoryEditJFrame extends javax.swing.JInternalFrame
 
     private void jbtnSaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jbtnSaveMouseClicked
 
-        if (jtxtCode.getText().isEmpty() || jtxtName.getText().isEmpty())
+        if (jtxtCode.getText().isEmpty()
+            || jtxtName.getText().isEmpty())
         {
-            JOptionPane.showMessageDialog(this, "Por favor ingresa un código y un nombre para guardar la categoría.");
+            OptionPane.showMessageDialog(this, "Ingrese los datos marcados con un asterisco "
+                + "para continuar.", " Modificar registro", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         
+        ICategory iCategory = Application.getContext().getBean(ICategory.class);
+        
         Category category = (Category) jcboCategory.getSelectedItem();
-        //profile.setCode(jtxtCode.getText());
+        category.setCode(jtxtCode.getText());
         category.setName(jtxtName.getText());
         category.setDescription(jtxtDescription.getText());
-        category.setUpdatedBy(ApplicationSession.getUser().getId());
-        category.setUpdatedDate(new Date());
+        category.setUpdatedBy(ApplicationSession.getUser());
+        category.setUpdatedDate(new GregorianCalendar());
 
-        ICategory iCategory = Application.getContext().getBean(ICategory.class);
         iCategory.update(category);
-        iCategory.flush();
 
         if (category.getId() != null)
         {
-            JOptionPane.showMessageDialog(this, "La categoría se ha actualizado exitosamente.");
+            OptionPane.showMessageDialog(this, "El registro se ha actualizado exitosamente.",
+                " Modificar registro", OptionPane.SUCCESS_MESSAGE);
 
             List<Category> list = iCategory.findAll();
             list.add(0, new Category("", "Elige una categoría", ""));
@@ -237,12 +309,16 @@ public class CategoryEditJFrame extends javax.swing.JInternalFrame
             jtxtName.setText("");
             jtxtDescription.setText("");
         }
+        else
+        {
+            OptionPane.showMessageDialog(this, "Ha ocurrido un error al intentar actualizar el registro.",
+                " Modificar registro", JOptionPane.ERROR_MESSAGE);
+        }
         
     }//GEN-LAST:event_jbtnSaveMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jbtnCancel;
     private javax.swing.JButton jbtnSave;
     private javax.swing.JComboBox<Category> jcboCategory;
     private javax.swing.JLabel jlblCategory;

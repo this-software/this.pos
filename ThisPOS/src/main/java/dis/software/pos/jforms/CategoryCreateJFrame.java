@@ -9,10 +9,16 @@ package dis.software.pos.jforms;
 
 import dis.software.pos.Application;
 import dis.software.pos.ApplicationSession;
+import dis.software.pos.OptionPane;
 import dis.software.pos.entities.Category;
 import dis.software.pos.interfaces.ICategory;
 import java.awt.Color;
 import javax.swing.JOptionPane;
+import javax.swing.WindowConstants;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Formulario para la creación de categorías
@@ -20,12 +26,43 @@ import javax.swing.JOptionPane;
  */
 public class CategoryCreateJFrame extends javax.swing.JInternalFrame
 {
+    
+    private static final Logger logger = LogManager.getLogger(CategoryCreateJFrame.class.getSimpleName());
 
     /**
      * Creación de nuevo formulario CategoryCreateJFrame
      */
-    public CategoryCreateJFrame() {
+    public CategoryCreateJFrame()
+    {
+
         initComponents();
+        
+        CategoryCreateJFrame frame = this;
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        frame.addInternalFrameListener(new InternalFrameAdapter()
+        {
+            @Override
+            public void internalFrameClosing(InternalFrameEvent e)
+            {
+                if (!jtxtCode.getText().isEmpty()
+                    && !jtxtName.getText().isEmpty())
+                {
+                    if (OptionPane.showConfirmDialog(frame,
+                        "<html>Los cambios efectuados aún no han sido guardados.<br>"
+                        + "¿Está seguro de que quiere continuar?</html>", " Cerrar ventana",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+                    {
+                        logger.info("Window closed");
+                        frame.dispose();
+                        return;
+                    }
+                    return;
+                }
+                logger.info("Window closed");
+                frame.dispose();
+            }
+        });
+        
     }
 
     /**
@@ -40,7 +77,6 @@ public class CategoryCreateJFrame extends javax.swing.JInternalFrame
         jpanelHeader = new javax.swing.JPanel();
         jlblHeader = new javax.swing.JLabel();
         jbtnSave = new javax.swing.JButton();
-        jbtnCancel = new javax.swing.JButton();
         jsepHeader = new javax.swing.JSeparator();
         jtxtCode = new javax.swing.JTextField();
         jlblCode = new javax.swing.JLabel();
@@ -51,6 +87,8 @@ public class CategoryCreateJFrame extends javax.swing.JInternalFrame
         jchkAutoCode = new javax.swing.JCheckBox();
 
         setClosable(true);
+        setIconifiable(true);
+        setMaximizable(true);
         setTitle("Nueva categoría");
         setToolTipText("");
 
@@ -61,19 +99,15 @@ public class CategoryCreateJFrame extends javax.swing.JInternalFrame
         jbtnSave.setBackground(new java.awt.Color(17, 157, 17));
         jbtnSave.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jbtnSave.setForeground(new java.awt.Color(255, 255, 255));
+        jbtnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/floppy-disk-w.png"))); // NOI18N
         jbtnSave.setText("Guardar");
         jbtnSave.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jbtnSave.setIconTextGap(8);
         jbtnSave.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jbtnSaveMouseClicked(evt);
             }
         });
-
-        jbtnCancel.setBackground(new java.awt.Color(204, 204, 204));
-        jbtnCancel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jbtnCancel.setForeground(new java.awt.Color(0, 0, 0));
-        jbtnCancel.setText("Cancelar");
-        jbtnCancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jpanelHeaderLayout = new javax.swing.GroupLayout(jpanelHeader);
         jpanelHeader.setLayout(jpanelHeaderLayout);
@@ -82,10 +116,8 @@ public class CategoryCreateJFrame extends javax.swing.JInternalFrame
             .addGroup(jpanelHeaderLayout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addComponent(jlblHeader)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 256, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 341, Short.MAX_VALUE)
                 .addComponent(jbtnSave)
-                .addGap(18, 18, 18)
-                .addComponent(jbtnCancel)
                 .addContainerGap())
         );
         jpanelHeaderLayout.setVerticalGroup(
@@ -93,9 +125,8 @@ public class CategoryCreateJFrame extends javax.swing.JInternalFrame
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpanelHeaderLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jpanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jbtnCancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jbtnSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jlblHeader))
+                    .addComponent(jlblHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jbtnSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -132,16 +163,16 @@ public class CategoryCreateJFrame extends javax.swing.JInternalFrame
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jpanelHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
+                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jlblDescription)
                     .addComponent(jlblName)
                     .addComponent(jlblCode))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jtxtDescription)
-                    .addComponent(jtxtName)
-                    .addComponent(jtxtCode, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jtxtName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                    .addComponent(jtxtCode, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jtxtDescription))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jchkAutoCode)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -156,20 +187,20 @@ public class CategoryCreateJFrame extends javax.swing.JInternalFrame
                 .addComponent(jpanelHeader, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jsepHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(50, 50, 50)
+                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jtxtCode, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtxtCode, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlblCode)
                     .addComponent(jchkAutoCode))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jlblName)
-                    .addComponent(jtxtName, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(19, 19, 19)
+                    .addComponent(jtxtName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jlblDescription)
-                    .addComponent(jtxtDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 335, Short.MAX_VALUE))
+                    .addComponent(jtxtDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 361, Short.MAX_VALUE))
         );
 
         pack();
@@ -177,32 +208,43 @@ public class CategoryCreateJFrame extends javax.swing.JInternalFrame
 
     private void jbtnSaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jbtnSaveMouseClicked
 
-        if (jtxtCode.getText().isEmpty() || jtxtName.getText().isEmpty())
+        if (jtxtCode.getText().isEmpty()
+            || jtxtName.getText().isEmpty())
         {
-            JOptionPane.showMessageDialog(this, "Por favor ingresa un código y un nombre para guardar la categoría.");
+            OptionPane.showMessageDialog(this, "Ingrese los datos marcados con un asterisco "
+                + "para continuar.", " Guardar registro", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        Category category = new Category(jtxtCode.getText(), jtxtName.getText(), jtxtDescription.getText());
-        category.setCreatedBy(ApplicationSession.getUser().getId());
         
         ICategory iCategory = Application.getContext().getBean(ICategory.class);
+        
+        Category category = new Category(jtxtCode.getText(), jtxtName.getText(), jtxtDescription.getText());
+        category.setCreatedBy(ApplicationSession.getUser());
+        
         category = iCategory.save(category);
 
         if (category.getId() != null)
         {
-            JOptionPane.showMessageDialog(this, "La categoría se ha guardado exitosamente.");
+            OptionPane.showMessageDialog(this, "El registro se ha guardado exitosamente.",
+                " Guardar registro", OptionPane.SUCCESS_MESSAGE);
+            
+            jtxtCode.setText("");
+            jtxtCode.setEditable(true);
+            jtxtCode.setBackground(Color.WHITE);
+            jchkAutoCode.setSelected(false);
+            jtxtName.setText("");
+            jtxtDescription.setText("");
         }
-
-        jtxtCode.setText("");
-        jtxtCode.setEditable(true);
-        jtxtCode.setBackground(Color.WHITE);
-        jchkAutoCode.setSelected(false);
-        jtxtName.setText("");
-        jtxtDescription.setText("");
+        else
+        {
+            OptionPane.showMessageDialog(this, "Ha ocurrido un error al intentar guardar el registro.",
+                " Guardar registro", JOptionPane.ERROR_MESSAGE);
+        }
         
     }//GEN-LAST:event_jbtnSaveMouseClicked
 
     private void jchkAutoCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jchkAutoCodeActionPerformed
+        
         if (jchkAutoCode.isSelected())
         {
             ICategory iCategory = Application.getContext().getBean(ICategory.class);
@@ -214,11 +256,11 @@ public class CategoryCreateJFrame extends javax.swing.JInternalFrame
         jtxtCode.setText("");
         jtxtCode.setEditable(true);
         jtxtCode.setBackground(Color.WHITE);
+        
     }//GEN-LAST:event_jchkAutoCodeActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jbtnCancel;
     private javax.swing.JButton jbtnSave;
     private javax.swing.JCheckBox jchkAutoCode;
     private javax.swing.JLabel jlblCode;
