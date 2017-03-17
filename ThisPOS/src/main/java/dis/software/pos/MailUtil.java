@@ -88,7 +88,7 @@ public class MailUtil
             @Override
             protected PasswordAuthentication getPasswordAuthentication()
             {
-                return new PasswordAuthentication("milton.cavazos@gmail.com", "milton/cavazos91");
+                return new PasswordAuthentication("xxx@gmail.com", "xxx");
             }
         };
 
