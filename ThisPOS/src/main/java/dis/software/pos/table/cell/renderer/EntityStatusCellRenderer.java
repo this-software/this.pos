@@ -28,17 +28,16 @@ public class EntityStatusCellRenderer extends DefaultTableCellRenderer
         boolean hasFocus, int row, int column)
     {
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        super.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         
-        EntityStatus status = (EntityStatus) value;
-        if (status == EntityStatus.ACTIVE)
+        setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        if (((EntityStatus) value).equals(EntityStatus.ACTIVE))
         {
-            super.setIcon(new DynamicIcon(Color.GREEN));
-            super.setText("ACTIVO");
+            setIcon(new DynamicIcon(Color.GREEN));
+            setText("ACTIVO");
             return this;
         }
-        super.setIcon(new DynamicIcon(Color.RED));
-        super.setText("INACTIVO");
+        setIcon(new DynamicIcon(Color.RED));
+        setText("INACTIVO");
         return this;
     }
     

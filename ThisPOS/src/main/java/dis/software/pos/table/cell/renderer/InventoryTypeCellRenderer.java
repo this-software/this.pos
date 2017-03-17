@@ -39,6 +39,7 @@ public class InventoryTypeCellRenderer extends DefaultTableCellRenderer
             case INCOME : setText("ENTRADA"); break;
             case OUTCOME : setText("SALIDA"); break;
             case CANCEL : setText("CANCELADO"); break;
+            case SYSTEM : setText("SISTEMA"); break;
         }
         return this;
     }

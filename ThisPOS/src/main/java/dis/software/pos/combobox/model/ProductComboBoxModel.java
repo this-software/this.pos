@@ -30,4 +30,5 @@ public class ProductComboBoxModel extends DefaultComboBoxModel<Product>
         Product product = (Product) super.getSelectedItem();
         return product;
     }
+    
 }

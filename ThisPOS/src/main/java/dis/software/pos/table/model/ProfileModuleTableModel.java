@@ -2,20 +2,26 @@ package dis.software.pos.table.model;
 
 import dis.software.pos.Property;
 import dis.software.pos.entities.ProfileModule;
+import dis.software.pos.entities.ProfileModulePk;
 import java.util.List;
-import javax.swing.table.AbstractTableModel;
 
 /**
  * Clase modelo constructora de una tabla para privilegios de un módulo por perfil
  * @author Milton Cavazos
  */
-public class ProfileModuleTableModel extends AbstractTableModel
+public class ProfileModuleTableModel extends GenericTableModel<ProfileModule, ProfileModulePk>
 {
     
-    private final List<ProfileModule> list;
+    public static final int COLUMN_MOD_ID = 0;
+    public static final int COLUMN_MOD_NAME = 1;
+    public static final int COLUMN_MOD_DESC = 2;
+    public static final int COLUMN_PRI_VIEW = 3;
+    public static final int COLUMN_PRI_CREATE = 4;
+    public static final int COLUMN_PRI_EDIT = 5;
+    public static final int COLUMN_PRI_DELETE = 6;
     
     private final String[] columnNames = new String[] {
-        "Id","Módulo", "Descripción", "Ver", "Crear", "Modificar", "Eliminar"
+        "Id módulo", "Módulo", "Descripción", "Ver", "Crear", "Modificar", "Eliminar"
     };
     private final Class[] columnClass = new Class[] {
         Long.class, String.class, String.class, Boolean.class, Boolean.class, Boolean.class, Boolean.class
@@ -24,9 +30,14 @@ public class ProfileModuleTableModel extends AbstractTableModel
         false, false, false, true, true, true, true
     };
     
+    public ProfileModuleTableModel()
+    {
+        super();
+    }
+    
     public ProfileModuleTableModel(List<ProfileModule> list)
     {
-        this.list = list;
+        super(list);
     }
     
     @Override
@@ -42,14 +53,15 @@ public class ProfileModuleTableModel extends AbstractTableModel
     }
     
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
+    public boolean isCellEditable(int rowIndex, int columnIndex)
+    {
         return canEdit[columnIndex];
     }
-
+    
     @Override
-    public int getRowCount()
+    public void setColumnEditable(int columnIndex, boolean canEdit)
     {
-        return list.size();
+        this.canEdit[columnIndex] = canEdit;
     }
 
     @Override
@@ -67,10 +79,10 @@ public class ProfileModuleTableModel extends AbstractTableModel
             case 0: return row.getModule().getId();
             case 1: return row.getModule().getName();
             case 2: return row.getModule().getDescription();
-            case 3: return row.getPrivileges().getViewProperty();
-            case 4: return row.getPrivileges().getCreateProperty();
-            case 5: return row.getPrivileges().getEditProperty();
-            case 6: return row.getPrivileges().getDeleteProperty();
+            case 3: return row.getPrivileges().getViewProperty() == Property.ALLOW;
+            case 4: return row.getPrivileges().getCreateProperty() == Property.ALLOW;
+            case 5: return row.getPrivileges().getEditProperty() == Property.ALLOW;
+            case 6: return row.getPrivileges().getDeleteProperty() == Property.ALLOW;
         }
         return null;
     }

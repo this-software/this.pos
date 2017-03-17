@@ -8,43 +8,45 @@
 
 package dis.software.pos.table.model;
 
-import dis.software.pos.entities.Product;
+import dis.software.pos.entities.Sale;
+import dis.software.pos.entities.User;
+import java.util.Calendar;
 import java.util.List;
 
 /**
- * Clase modelo constructora de una tabla para productos
+ * Clase modelo constructora de una tabla para ventas
  * @author Milton Cavazos
  */
-public class ProductTableModel extends GenericTableModel<Product, Long>
+public class SaleTableModel extends GenericTableModel<Sale, Long>
 {
     
     public static final int COLUMN_ID = 0;
-    public static final int COLUMN_CODE = 1;
-    public static final int COLUMN_NAME = 2;
-    public static final int COLUMN_DESC = 3;
-    public static final int COLUMN_PRICE = 4;
+    public static final int COLUMN_CREATED_DATE = 1;
+    public static final int COLUMN_SUBTOTAL = 2;
+    public static final int COLUMN_TAX = 3;
+    public static final int COLUMN_TOTAL_AMOUNT = 4;
     public static final int COLUMN_COST = 5;
-    public static final int COLUMN_CATEGORY = 6;
-    public static final int COLUMN_PROVIDER = 7;
-    public static final int COLUMN_UNITS_IN_STOCK = 8;
+    public static final int COLUMN_GAINS_LOSSES = 6;
+    public static final int COLUMN_CREATED_BY = 7;
     
     private final String[] columnNames = new String[] {
-        "Id", "Código", "Nombre", "Descripción", "Precio", "Costo", "Categoría", "Proveedor", "Cantidad disp."
+        "Id", "Fecha venta", "Subtotal", "Impuesto", "Monto", "Costo venta", "Utilidad/Perdida",
+        "Atendió"
     };
     private final Class[] columnClass = new Class[] {
-        Integer.class, String.class, String.class, String.class,
-        Double.class, Double.class, String.class, String.class, Integer.class
+        Integer.class, Calendar.class, Double.class, Double.class, Double.class, Double.class, Double.class,
+        String.class
     };
     private final boolean[] canEdit = new boolean [] {
-        false, false, false, false, false, false, false, false, false
+        false, false, false, false, false, false, false, false
     };
     
-    public ProductTableModel()
+    public SaleTableModel()
     {
         super();
     }
     
-    public ProductTableModel(List<Product> list)
+    public SaleTableModel(List<Sale> list)
     {
         super(list);
     }
@@ -82,18 +84,17 @@ public class ProductTableModel extends GenericTableModel<Product, Long>
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
-        Product row = list.get(rowIndex);
+        Sale row = list.get(rowIndex);
         switch(columnIndex)
         {
             case 0: return row.getId();
-            case 1: return row.getCode();
-            case 2: return row.getName();
-            case 3: return row.getDescription();
-            case 4: return row.getPrice();
+            case 1: return row.getCreatedDate();
+            case 2: return row.getSubtotal();
+            case 3: return row.getTax();
+            case 4: return row.getTotalAmount();
             case 5: return row.getCost();
-            case 6: return row.getCategory().getName();
-            case 7: return row.getProvider().getName();
-            case 8: return row.getUnitsInStock();
+            case 6: return row.getTotalAmount() - row.getCost();
+            case 7: return row.getCreatedBy().getName();
         }
         return null;
     }
@@ -101,18 +102,17 @@ public class ProductTableModel extends GenericTableModel<Product, Long>
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex)
     {
-        Product row = list.get(rowIndex);
+        Sale row = list.get(rowIndex);
         switch(columnIndex)
         {
             case 0: row.setId((Long) aValue); break;
-            case 1: row.setCode((String) aValue); break;
-            case 2: row.setName((String) aValue); break;
-            case 3: row.setDescription((String) aValue); break;
-            case 4: row.setPrice((Double) aValue); break;
+            case 1: row.setCreatedDate((Calendar) aValue); break;
+            case 2: row.setSubtotal((Double) aValue); break;
+            case 3: row.setTax((Double) aValue); break;
+            case 4: row.setTotalAmount((Double) aValue); break;
             case 5: row.setCost((Double) aValue); break;
-            case 6: row.getCategory().setName((String) aValue); break;
-            case 7: row.getProvider().setName((String) aValue); break;
-            case 8: row.setUnitsInStock((Integer) aValue); break;
+            case 6: break;
+            case 7: row.setCreatedBy((User) aValue); break;
         }
         this.fireTableCellUpdated(rowIndex, columnIndex);
     }

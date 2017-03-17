@@ -10,48 +10,48 @@ package dis.software.pos.table.model;
 
 import dis.software.pos.InventoryType;
 import dis.software.pos.entities.InventoryProduct;
-import java.util.ArrayList;
+import dis.software.pos.entities.InventoryProductPk;
 import java.util.Calendar;
 import java.util.List;
-import javax.swing.table.AbstractTableModel;
 
 /**
  * Clase modelo constructora de una tabla para la relación Inventario - Productos
  * @author Milton Cavazos
  */
-public class InventoryProductTableModel extends AbstractTableModel
+public class InventoryProductTableModel extends GenericTableModel<InventoryProduct, InventoryProductPk>
 {
     
     public static final int COLUMN_PROD_ID = 0;
-    public static final int COLUMN_INV_TYPE = 1;
-    public static final int COLUMN_INV_DATE = 2;
-    public static final int COLUMN_PROD_CODE = 3;
-    public static final int COLUMN_PROD_NAME = 4;
-    public static final int COLUMN_PROD_DESC = 5;
-    public static final int COLUMN_UNITS = 6;
-
-    private final List<InventoryProduct> list;
+    public static final int COLUMN_UNIT_ID = 1;
+    public static final int COLUMN_INV_TYPE = 2;
+    public static final int COLUMN_INV_DATE = 3;
+    public static final int COLUMN_PROD_CODE = 4;
+    public static final int COLUMN_PROD_NAME = 5;
+    public static final int COLUMN_PROD_DESC = 6;
+    public static final int COLUMN_QUANTITY = 7;
+    public static final int COLUMN_UNIT_CODE = 8;
+    public static final int COLUMN_REAL_QTY = 9;
     
     private final String[] columnNames = new String[] {
-        "Id prod.", "Tipo de mov.", "Fecha de mov.", "Código prod.",
-        "Nombre prod.", "Descripción prod.", "Cantidad"
+        "Id prod.", "Id unidad", "Tipo de mov.", "Fecha de mov.", "Código prod.", "Nombre prod.",
+        "Descripción prod.", "Cantidad", "Unidad", "Cantidad real"
     };
     private final Class[] columnClass = new Class[] {
-        Integer.class, InventoryType.class, Calendar.class, String.class,
-        String.class, String.class, Integer.class
+        Integer.class, Integer.class, InventoryType.class, Calendar.class, String.class, String.class,
+        String.class, Integer.class, String.class, Integer.class
     };
     private final boolean[] canEdit = new boolean [] {
-        false, false, false, false, false, false, false
+        false, false, false, false, false, false, false, false, false, true
     };
     
     public InventoryProductTableModel()
     {
-        this.list = new ArrayList<>();
+        super();
     }
     
     public InventoryProductTableModel(List<InventoryProduct> list)
     {
-        this.list = list;
+        super(list);
     }
     
     @Override
@@ -67,14 +67,15 @@ public class InventoryProductTableModel extends AbstractTableModel
     }
     
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
+    public boolean isCellEditable(int rowIndex, int columnIndex)
+    {
         return canEdit[columnIndex];
     }
     
     @Override
-    public int getRowCount()
+    public void setColumnEditable(int columnIndex, boolean canEdit)
     {
-        return list.size();
+        this.canEdit[columnIndex] = canEdit;
     }
 
     @Override
@@ -90,14 +91,15 @@ public class InventoryProductTableModel extends AbstractTableModel
         switch(columnIndex)
         {
             case COLUMN_PROD_ID: return row.getProduct().getId();
-            case COLUMN_INV_TYPE: return row.getInventory().getType() == 0
-                ? InventoryType.INCOME
-                : row.getInventory().getType() == 1 ? InventoryType.OUTCOME : InventoryType.CANCEL;
+            case COLUMN_UNIT_ID: return row.getUnit().getId();
+            case COLUMN_INV_TYPE: return row.getInventory().getType();
             case COLUMN_INV_DATE: return row.getInventory().getCreatedDate();
             case COLUMN_PROD_CODE: return row.getProduct().getCode();
             case COLUMN_PROD_NAME: return row.getProduct().getName();
             case COLUMN_PROD_DESC: return row.getProduct().getDescription();
-            case COLUMN_UNITS: return row.getUnits();
+            case COLUMN_QUANTITY: return row.getUnits();
+            case COLUMN_UNIT_CODE: return row.getUnit().getName();
+            case COLUMN_REAL_QTY: return row.getRealUnits();
         }
         return null;
     }
@@ -109,48 +111,17 @@ public class InventoryProductTableModel extends AbstractTableModel
         switch(columnIndex)
         {
             case COLUMN_PROD_ID: row.getProduct().setId((Long) aValue); break;
+            case COLUMN_UNIT_ID: row.getUnit().setId((Long) aValue); break;
             case COLUMN_INV_TYPE: row.getInventory().setType((InventoryType) aValue); break;
             case COLUMN_INV_DATE: row.getInventory().setCreatedDate((Calendar) aValue); break;
             case COLUMN_PROD_CODE: row.getProduct().setCode((String) aValue); break;
             case COLUMN_PROD_NAME: row.getProduct().setName((String) aValue); break;
             case COLUMN_PROD_DESC: row.getProduct().setDescription((String) aValue); break;
-            case COLUMN_UNITS: row.setUnits((Integer) aValue); break;
+            case COLUMN_QUANTITY: row.setUnits((Integer) aValue); break;
+            case COLUMN_UNIT_CODE: row.getUnit().setName((String) aValue); break;
+            case COLUMN_REAL_QTY: row.setRealUnits((Integer) aValue); break;
         }
         this.fireTableCellUpdated(rowIndex, columnIndex);
-    }
-    
-    public void add(InventoryProduct inventoryProduct)
-    {
-        int rowIndex = list.size();
-        if (!list.contains(inventoryProduct))
-        {
-            list.add(inventoryProduct);
-            this.fireTableRowsInserted(rowIndex, rowIndex);
-        }
-    }
-    
-    public void remove(int aRowIndex)
-    {
-        if (aRowIndex < 0 || aRowIndex >= list.size())
-        {
-            return;
-        }
-        list.remove(aRowIndex);
-        this.fireTableRowsDeleted(aRowIndex, aRowIndex);
-    }
-    
-    public void removeAll()
-    {
-        if (list.size() <= 0)
-        {
-            return;
-        }
-        int lastRow = list.size();
-        for (int i = 0; i<=list.size(); i++)
-        {
-            list.remove(i);
-        }
-        this.fireTableRowsDeleted(0, lastRow);
     }
     
 }

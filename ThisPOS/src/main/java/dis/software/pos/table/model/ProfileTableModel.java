@@ -2,16 +2,18 @@ package dis.software.pos.table.model;
 
 import dis.software.pos.entities.Profile;
 import java.util.List;
-import javax.swing.table.AbstractTableModel;
 
 /**
  * Clase modelo constructora de una tabla para perfiles
  * @author Milton Cavazos
  */
-public class ProfileTableModel extends AbstractTableModel
+public class ProfileTableModel extends GenericTableModel<Profile, Long>
 {
     
-    private final List<Profile> list;
+    public static final int COLUMN_ID = 0;
+    public static final int COLUMN_CODE = 1;
+    public static final int COLUMN_NAME = 2;
+    public static final int COLUMN_DESC = 3;
     
     private final String[] columnNames = new String[] {
         "Id", "Código", "Nombre", "Descripción"
@@ -23,9 +25,14 @@ public class ProfileTableModel extends AbstractTableModel
         false, false, false, false
     };
     
+    public ProfileTableModel()
+    {
+        super();
+    }
+    
     public ProfileTableModel(List<Profile> list)
     {
-        this.list = list;
+        super(list);
     }
     
     @Override
@@ -41,14 +48,15 @@ public class ProfileTableModel extends AbstractTableModel
     }
     
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
+    public boolean isCellEditable(int rowIndex, int columnIndex)
+    {
         return canEdit[columnIndex];
     }
-
+    
     @Override
-    public int getRowCount()
+    public void setColumnEditable(int columnIndex, boolean canEdit)
     {
-        return list.size();
+        this.canEdit[columnIndex] = canEdit;
     }
 
     @Override

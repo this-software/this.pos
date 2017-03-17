@@ -10,16 +10,18 @@ package dis.software.pos.table.model;
 
 import dis.software.pos.entities.Category;
 import java.util.List;
-import javax.swing.table.AbstractTableModel;
 
 /**
  * Clase modelo constructora de una tabla para categorías
  * @author Milton Cavazos
  */
-public class CategoryTableModel extends AbstractTableModel
+public class CategoryTableModel extends GenericTableModel<Category, Long>
 {
     
-    private final List<Category> list;
+    public static final int COLUMN_ID = 0;
+    public static final int COLUMN_CODE = 1;
+    public static final int COLUMN_NAME = 2;
+    public static final int COLUMN_DESC = 3;
     
     private final String[] columnNames = new String[] {
         "Id", "Código", "Nombre", "Descripción"
@@ -31,9 +33,14 @@ public class CategoryTableModel extends AbstractTableModel
         false, false, false, false
     };
     
+    public CategoryTableModel()
+    {
+        super();
+    }
+    
     public CategoryTableModel(List<Category> list)
     {
-        this.list = list;
+        super(list);
     }
     
     @Override
@@ -49,14 +56,15 @@ public class CategoryTableModel extends AbstractTableModel
     }
     
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
+    public boolean isCellEditable(int rowIndex, int columnIndex)
+    {
         return canEdit[columnIndex];
     }
-
+    
     @Override
-    public int getRowCount()
+    public void setColumnEditable(int columnIndex, boolean canEdit)
     {
-        return list.size();
+        this.canEdit[columnIndex] = canEdit;
     }
 
     @Override

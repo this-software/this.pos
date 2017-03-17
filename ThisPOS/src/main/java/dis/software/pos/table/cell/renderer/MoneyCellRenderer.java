@@ -9,30 +9,33 @@
 package dis.software.pos.table.cell.renderer;
 
 import java.awt.Component;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
- * Clase para construir y personalizar una columna de tipo Calendar
+ * Clase para construir y personalizar una columna de tipo Double
  * @author Milton Cavazos
  */
-public class CalendarCellRenderer extends DefaultTableCellRenderer
+public class MoneyCellRenderer extends DefaultTableCellRenderer
 {
     
-    public CalendarCellRenderer()
+    public MoneyCellRenderer()
     {
         super();
     }
-
+    
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
         boolean hasFocus, int row, int column)
     {
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        setText(((new SimpleDateFormat("dd-MMM-yyyy hh:mm a"))
-            .format(((Calendar) value).getTime())));
+        if (value instanceof Double
+            && (Double) value >= 0.00)
+        {
+            setText(String.format("$%,.2f", value));
+            setHorizontalAlignment(SwingConstants.RIGHT);
+        }
         return this;
     }
     

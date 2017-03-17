@@ -4,16 +4,20 @@ import dis.software.pos.EntityStatus;
 import dis.software.pos.entities.Profile;
 import dis.software.pos.entities.User;
 import java.util.List;
-import javax.swing.table.AbstractTableModel;
 
 /**
  * Clase modelo constructora de una tabla para usuarios
  * @author Milton Cavazos
  */
-public class UserTableModel extends AbstractTableModel
+public class UserTableModel extends GenericTableModel<User, Long>
 {
     
-    private final List<User> list;
+    public static final int COLUMN_ID = 0;
+    public static final int COLUMN_CODE = 1;
+    public static final int COLUMN_NAME = 2;
+    public static final int COLUMN_EMAIL = 3;
+    public static final int COLUMN_PROFILE_NAME = 4;
+    public static final int COLUMN_STATUS = 5;
     
     private final String[] columnNames = new String[] {
         "Id", "Código", "Usuario", "Correo", "Perfil", "Estado"
@@ -25,9 +29,14 @@ public class UserTableModel extends AbstractTableModel
         false, false, false, false, false, false
     };
     
+    public UserTableModel()
+    {
+        super();
+    }
+    
     public UserTableModel(List<User> list)
     {
-        this.list = list;
+        super(list);
     }
     
     @Override
@@ -43,14 +52,15 @@ public class UserTableModel extends AbstractTableModel
     }
     
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
+    public boolean isCellEditable(int rowIndex, int columnIndex)
+    {
         return canEdit[columnIndex];
     }
-
+    
     @Override
-    public int getRowCount()
+    public void setColumnEditable(int columnIndex, boolean canEdit)
     {
-        return list.size();
+        this.canEdit[columnIndex] = canEdit;
     }
 
     @Override
@@ -70,7 +80,7 @@ public class UserTableModel extends AbstractTableModel
             case 2: return row.getName();
             case 3: return row.getEmail();
             case 4: return row.getProfile().getName();
-            case 5: return row.isActive() ? EntityStatus.ACTIVE : EntityStatus.INACTIVE;
+            case 5: return row.getStatus();
         }
         return null;
     }
@@ -86,7 +96,7 @@ public class UserTableModel extends AbstractTableModel
             case 2: row.setName((String) aValue); break;
             case 3: row.setEmail((String) aValue); break;
             case 4: row.setProfile((Profile) aValue); break;
-            case 5: row.isActive((Integer) aValue);
+            case 5: row.setStatus((EntityStatus) aValue);
         }
         this.fireTableCellUpdated(rowIndex, columnIndex);
     }
