@@ -1,0 +1,39 @@
+{
+  "store_code": "TEST01",
+  "store_name": "DEPOSITO KARLOS",
+  "store_description": "Lugar de venta de alcohol y varios",
+  "tax": 0.16,
+  "out_of_time": "Mar 10, 2017 8:00:00 PM",
+  "deleted": false,
+  "updated_by": {
+    "id": null,
+    "code": null,
+    "name": "mcavazos",
+    "email": "milton.cavazos@gmail.com",
+    "password": "LSb2gQLTpIpj0zRnBEXbxHPbbD5xTpZSTZOpZP9GRAxXT7BqnWih8N7nfL7ZIVG3",
+    "salt": null,
+    "status": null,
+    "deleted": null,
+    "receiveNotifications": null,
+    "createdBy": null,
+    "createdDate": {
+      "year": 2017,
+      "month": 2,
+      "dayOfMonth": 10,
+      "hourOfDay": 17,
+      "minute": 42,
+      "second": 0
+    },
+    "updatedBy": null,
+    "updatedDate": null,
+    "profile": null
+  },
+  "updated_date": {
+    "year": 2017,
+    "month": 2,
+    "dayOfMonth": 10,
+    "hourOfDay": 17,
+    "minute": 42,
+    "second": 0
+  }
+}

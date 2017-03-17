@@ -1,0 +1,177 @@
+[
+  {
+    "code": "SYNINV",
+    "link": "NA",
+    "updated_by": {
+      "id": null,
+      "code": null,
+      "name": "mcavazos",
+      "email": "milton.cavazos@gmail.com",
+      "password": "LSb2gQLTpIpj0zRnBEXbxHPbbD5xTpZSTZOpZP9GRAxXT7BqnWih8N7nfL7ZIVG3",
+      "salt": null,
+      "status": null,
+      "deleted": null,
+      "receiveNotifications": null,
+      "createdBy": null,
+      "createdDate": {
+        "year": 2017,
+        "month": 2,
+        "dayOfMonth": 10,
+        "hourOfDay": 17,
+        "minute": 42,
+        "second": 0
+      },
+      "updatedBy": null,
+      "updatedDate": null,
+      "profile": null
+    },
+    "updated_date": {
+      "year": 2017,
+      "month": 2,
+      "dayOfMonth": 10,
+      "hourOfDay": 17,
+      "minute": 42,
+      "second": 0
+    }
+  },
+  {
+    "code": "SYNPRO",
+    "link": "http://api.this-pos.com/product/",
+    "updated_by": {
+      "id": null,
+      "code": null,
+      "name": "mcavazos",
+      "email": "milton.cavazos@gmail.com",
+      "password": "LSb2gQLTpIpj0zRnBEXbxHPbbD5xTpZSTZOpZP9GRAxXT7BqnWih8N7nfL7ZIVG3",
+      "salt": null,
+      "status": null,
+      "deleted": null,
+      "receiveNotifications": null,
+      "createdBy": null,
+      "createdDate": {
+        "year": 2017,
+        "month": 2,
+        "dayOfMonth": 10,
+        "hourOfDay": 17,
+        "minute": 42,
+        "second": 0
+      },
+      "updatedBy": null,
+      "updatedDate": null,
+      "profile": null
+    },
+    "updated_date": {
+      "year": 2017,
+      "month": 2,
+      "dayOfMonth": 10,
+      "hourOfDay": 17,
+      "minute": 42,
+      "second": 0
+    }
+  },
+  {
+    "code": "SYNPRM",
+    "link": "NA",
+    "updated_by": {
+      "id": null,
+      "code": null,
+      "name": "mcavazos",
+      "email": "milton.cavazos@gmail.com",
+      "password": "LSb2gQLTpIpj0zRnBEXbxHPbbD5xTpZSTZOpZP9GRAxXT7BqnWih8N7nfL7ZIVG3",
+      "salt": null,
+      "status": null,
+      "deleted": null,
+      "receiveNotifications": null,
+      "createdBy": null,
+      "createdDate": {
+        "year": 2017,
+        "month": 2,
+        "dayOfMonth": 10,
+        "hourOfDay": 17,
+        "minute": 42,
+        "second": 0
+      },
+      "updatedBy": null,
+      "updatedDate": null,
+      "profile": null
+    },
+    "updated_date": {
+      "year": 2017,
+      "month": 2,
+      "dayOfMonth": 10,
+      "hourOfDay": 17,
+      "minute": 42,
+      "second": 0
+    }
+  },
+  {
+    "code": "SYNPUR",
+    "link": "http://api.this-pos.com/purchase/",
+    "updated_by": {
+      "id": null,
+      "code": null,
+      "name": "mcavazos",
+      "email": "milton.cavazos@gmail.com",
+      "password": "LSb2gQLTpIpj0zRnBEXbxHPbbD5xTpZSTZOpZP9GRAxXT7BqnWih8N7nfL7ZIVG3",
+      "salt": null,
+      "status": null,
+      "deleted": null,
+      "receiveNotifications": null,
+      "createdBy": null,
+      "createdDate": {
+        "year": 2017,
+        "month": 2,
+        "dayOfMonth": 10,
+        "hourOfDay": 17,
+        "minute": 42,
+        "second": 0
+      },
+      "updatedBy": null,
+      "updatedDate": null,
+      "profile": null
+    },
+    "updated_date": {
+      "year": 2017,
+      "month": 2,
+      "dayOfMonth": 10,
+      "hourOfDay": 17,
+      "minute": 42,
+      "second": 0
+    }
+  },
+  {
+    "code": "SYNSAL",
+    "link": "http://api.this-pos.com/sale/",
+    "updated_by": {
+      "id": null,
+      "code": null,
+      "name": "mcavazos",
+      "email": "milton.cavazos@gmail.com",
+      "password": "LSb2gQLTpIpj0zRnBEXbxHPbbD5xTpZSTZOpZP9GRAxXT7BqnWih8N7nfL7ZIVG3",
+      "salt": null,
+      "status": null,
+      "deleted": null,
+      "receiveNotifications": null,
+      "createdBy": null,
+      "createdDate": {
+        "year": 2017,
+        "month": 2,
+        "dayOfMonth": 10,
+        "hourOfDay": 17,
+        "minute": 42,
+        "second": 0
+      },
+      "updatedBy": null,
+      "updatedDate": null,
+      "profile": null
+    },
+    "updated_date": {
+      "year": 2017,
+      "month": 2,
+      "dayOfMonth": 10,
+      "hourOfDay": 17,
+      "minute": 42,
+      "second": 0
+    }
+  }
+]
