@@ -1,0 +1,400 @@
+                                                                 
+ EXPEDIDO EN: ABARROTES KRLOS                                    
+ AV. UNIVERSIDAD #200 ESCOBEDO, N.L.                             
+=================================================================
+                      DETALLE DE INVENTARIO                      
+ NO. BOLETA: 16                                                  
+ FECHA DE EMISION: 2017-feb-03      HORA: 17:31:56               
+ CAJA: 045                                                       
+ GENERADO POR: mcavazos                                          
+-----------------------------------------------------------------
+|DESCRIPCION                                      |CANT          
+-----------------------------------------------------------------
+ Tecate de 355ml                                   160           
+ Indio de 355ml                                    314           
+ Tapa con 24 latas de Tecate                       67            
+ Litro de leche de almendra                        -40           
+ BOTANA 7                                          0             
+ BOTANA 8                                          54            
+ BOTANA 9                                          129           
+ BOTANA 10                                         184           
+ BOTANA 12                                         7             
+ BOTANA 14                                         7             
+ BOTANA 15                                         41            
+ VASO ESCARCHADO LT                                27            
+ BOTANA 20                                         21            
+ BOTANA YEYE 10                                    0             
+ BOTANA YEYE 15                                    0             
+ MICHE MIX SOBRE                                   30            
+ MICHEMIX BOTELLA 2                                17            
+ VASO MICHELADO                                    0             
+ BOTANA 28                                         12            
+ BOTANA 30                                         0             
+ BOG PISTACHE 25G                                  0             
+ BOG ZARAZA 36G                                    0             
+ SEMILLAS 9                                        0             
+ BOG 3 MIX 300G                                    0             
+ BOG SABOR MX                                      0             
+ BOG CHICHARRON 100                                0             
+ FRG FRITURAS FRG                                  0             
+ GUA CAMARON GDE                                   0             
+ GUA CAMARON MED                                   0             
+ GUA CHARAL                                        0             
+ GUA PISTACHE                                      0             
+ GUA CHICHARRON CER                                0             
+ GUA CHICHARRON HAR                                0             
+ GUA CACAHUATE MED                                 0             
+ GUA CACAHUATE VAIN                                0             
+ GUA TOTOPITO                                      0             
+ GUA MEXCLA-MEX                                    0             
+ GUA VASITO                                        0             
+ GUA CARNE SECA                                    0             
+ GUA ZARAZA CH                                     0             
+ GUA ZARAZA MED                                    0             
+ GUA PAPAS                                         0             
+ GUA TOTOPOTE                                      0             
+ GUA COMBINADO                                     0             
+ GUA PALOMITAS                                     0             
+ VASO/PALETA TAM                                   0             
+ CACAHUATE JAPONES                                 0             
+ VAINA/PALETA TAM                                  0             
+ BOLA/GOMA TAM                                     0             
+ VASO GOMITAS                                      0             
+ VASO VAINA TAM                                    0             
+ CAGUAMA CARTA                                     26            
+ SALIMON                                           0             
+ TAMARINDO VASO                                    0             
+ DULCE 2                                           129           
+ DULCE 4                                           0             
+ DULCE 6                                           31            
+ DULCE 5                                           0             
+ DULCE 1                                           1             
+ VASO 1/2                                          0             
+ VASO LTO                                          0             
+ DULCE DE 10                                       0             
+ CARTA 1/2                                         42            
+ CARTA 1/4                                         0             
+ CARTA LATA                                        0             
+ XX LTO                                            11            
+ CARTA 1/1 NR                                      0             
+ CAGUAMON CB                                       126           
+ SOL CLAM/CERO                                     95            
+ STRONGBOW                                         0             
+ AGUA 1 1/2 LTS.                                   18            
+ AG SAB 1 1/2 L                                    0             
+ AGUA 1 LTO.                                       5             
+ AGUA 1/2 LTR.                                     0             
+ PAPEL HIG                                         0             
+ AGUAFIEL 1 LTO                                    7             
+ JUMEX 250                                         0             
+ CARBON                                            19            
+ CARBON 25                                         3             
+ HIELERA CHICA                                     0             
+ HIELERA GRANDE                                    0             
+ HIELERA MONTERREY                                 0             
+ SOL 1/2                                           95            
+ HIELERA SIX                                       0             
+ BARRA 1/8                                         0             
+ HIELO BOLSA                                       0             
+ JUGO V8                                           0             
+ LE¥A                                              1             
+ LEÑA RV                                           0             
+ PORTA-CAGUAMA                                     0             
+ PORTA-CHEVE                                       0             
+ SOL 160Z                                          0             
+ SOL 1 1/4                                         26            
+ SOL LIMON                                         -1            
+ COORS 1/2 NR                                      0             
+ COORS LTO                                         0             
+ SOL BRAVA QP                                      0             
+ TKT TITANIUM                                      36            
+ INDIO GIRATOP                                     12            
+ ABSOLUT 3/4                                       0             
+ ABSOLUT LTO                                       0             
+ ABSOLUT WATKINS                                   0             
+ ABSOLUT 100                                       0             
+ WILLIAM LAWSON                                    0             
+ XX RADLER                                         18            
+ MEZCAL 1/2                                        0             
+ MEZCAL LTO                                        0             
+ APPLETON STATE                                    0             
+ GLENBAYS                                          0             
+ AGUA QUINA 355 ML                                 0             
+ MOET CHANDON                                      0             
+ CREMA DE COCO                                     0             
+ LECHE CARNATION                                   0             
+ CUERVO ESPECIAL 1/                                0             
+ BOOST                                             0             
+ BOONES 3/4                                        0             
+ CHIVAS 18 AÑOS                                    0             
+ CHIVAS LTO                                        0             
+ AZTECA ORO 375                                    0             
+ BLACK & WHITE                                     0             
+ OLD PAR LTO                                       0             
+ BUCHANANS MASTER                                  0             
+ BUCHANANS 18 AÑOS                                 0             
+ BUCHANANS LTO                                     0             
+ BACARDI AÑEJO 1 LT                                0             
+ AZTECA ORO                                        0             
+ BACARDI AÑEJO 3/4                                 0             
+ INDIO 1/1                                         0             
+ BACARDI BLANCO 1/2                                0             
+ BACARDI BLANCO 1 L                                0             
+ BACARDI BLANCO 1/4                                0             
+ BACARDI AÑEJO 375                                 0             
+ BACARDI BLANCO 3/4                                0             
+ BACARDI RAZZ/LIMON                                0             
+ FLOR DE CAÑA                                      0             
+ STOLICHNAYA 375                                   0             
+ ABSOLUT MANDRIN                                   0             
+ ABSOLUT CITRON                                    0             
+ ABSOLUT RUBY RED                                  0             
+ MATUSALEM                                         0             
+ TORRES 10 1/2                                     0             
+ KRAKEN                                            0             
+ BACARDI SABOR  3/4                                0             
+ BACARDI 8 AÑOS                                    0             
+ J B 3/4                                           0             
+ JACK DAN 375                                      0             
+ ETIQUETA ROJA LTO                                 0             
+ ETIQUETA ROJA 375                                 0             
+ VAT 69                                            0             
+ CATTOS                                            0             
+ NUVO                                              0             
+ CENTENARIO AÑEJO                                  0             
+ INDIO 1/2                                         148           
+ BUCHANANS MX                                      0             
+ BUCHANANS                                         0             
+ ETIQUETA NEGRA 3/4                                0             
+ ETIQUETA AZUL 3/4                                 0             
+ ETIQUETA VERDE LTO                                0             
+ ETIQUETA DOR 3/4                                  0             
+ CARIBE COOLER                                     0             
+ CHIVAS 3/4                                        0             
+ JACK DANIELS 3/4                                  0             
+ CHIVAS 375                                        0             
+ BUCHANANS 375                                     0             
+ CAZADORES 3/4                                     0             
+ CAZADORES LTO                                     0             
+ CENTENARIO                                        0             
+ CENTENARIO PLATA                                  0             
+ JACK DAN LTO                                      0             
+ CLAMATO KERNS 250                                 16            
+ CLAMATO MINI                                      0             
+ ET NEGRA 1/4                                      0             
+ CAPITAN MORGAN                                    0             
+ AZUL 375                                          0             
+ CLAMATO KERNS 470                                 4             
+ CLAMATO KERNS LTO                                 12            
+ CLAMATO 2L                                        0             
+ DEWAR'S                                           0             
+ RED BULL                                          0             
+ CUERVO ESP 1 LTO                                  0             
+ SAUZA AÑEJO 1/4                                   0             
+ TRADICIONAL LTO                                   0             
+ HERRADURA ANT LTO                                 0             
+ TRADICIONAL 375                                   0             
+ TRADICIONAL 3/4                                   0             
+ HERRADURA ANT 3/4                                 0             
+ HPNOTIQ                                           0             
+ BALLANTINES 375                                   0             
+ DISARONNO                                         0             
+ D JULIO AÑ 375                                    0             
+ JAMESON 1/4                                       0             
+ TRADICIONAL 1/2                                   0             
+ DON JULIO BCO 3/4                                 0             
+ DON JULIO REP 3/4                                 0             
+ INDIO 1/4                                         40            
+ DON PEDRO 1/2 LTO                                 0             
+ DON PEDRO 1 LTO                                   0             
+ DON PEDRO 1/4 LTO                                 0             
+ DON PEDRO 3/4 LTO                                 0             
+ JIMADOR BCO LTO                                   0             
+ JIMADOR BCO 3/4                                   0             
+ ET. NEGRA 375                                     0             
+ SOLERA                                            0             
+ HERRADURA REP LTO                                 0             
+ TERRY                                             0             
+ HERRADURA BCO 3/4                                 0             
+ TORRES 5                                          0             
+ HERRADURA REP. 3/4                                0             
+ HORNITOS 1/4                                      0             
+ HORNITOS 1 LTO                                    0             
+ TORRES 10                                         0             
+ HORNITOS 3/4 LTO                                  0             
+ HORNITOS AÑEJO 3/4                                0             
+ JARABE NATURAL                                    0             
+ JIMADOR 1 LTO                                     0             
+ JIMADOR 1/2 LTO                                   0             
+ JIMADOR 1/4 LTO                                   0             
+ JIMADOR 3/4 LTO                                   0             
+ MALIBU 3/4                                        0             
+ MARGARITA 3/4                                     0             
+ VINO TINTO/BLANCO                                 0             
+ VINO TINTO 150                                    0             
+ MARTELL VS 3/4                                    0             
+ MARTELL VSOP 375                                  0             
+ MARTELL VSOP 3/4                                  0             
+ BAILEYS 375                                       0             
+ CUERVO ESP 3/4                                    0             
+ AZUL 3/4                                          0             
+ NEW MIX  355 ML                                   114           
+ NEW MIX 2L                                        0             
+ ORENDAIN BCO 1/4                                  0             
+ ORENDAIN BCO LTO                                  0             
+ OSO NEGRO LTO                                     0             
+ OSO NEGRO 1/4                                     0             
+ INDIO 1 1/4                                       142           
+ MARTINI                                           0             
+ PASSPORT 3/4                                      0             
+ PASSPORT LTO                                      0             
+ JUGO LTO                                          0             
+ PRESIDENTE 1 LTO                                  0             
+ PRESIDENTE 1/2 LTO                                0             
+ PRESIDENTE 1/4 LTO                                0             
+ PRESIDENTE 3/4 LTO                                0             
+ SANGRITA AGAVITO                                  0             
+ SANGRITA LA VIUDA                                 0             
+ SIDRA CELEBRACION                                 0             
+ SMIRNOFF 3/4                                      0             
+ EL CHARRO 375                                     0             
+ SMIRNOFF LTO                                      0             
+ HIGHLAND RESERVE                                  0             
+ HERRADURA 375                                     0             
+ TEQ. CABRITO LTO                                  0             
+ TEQ CORRALEJO 3/4                                 0             
+ TEQ CORRALEJO LT                                  0             
+ SMIRNOFF 375                                      0             
+ VAMPIRO LTO                                       0             
+ VIEJO VERGEL 1 LTO                                0             
+ VIEJO VERGEL 1/2 L                                0             
+ VIEJO VERGEL 1/4 L                                0             
+ VIEJO VERGEL 3/4 L                                0             
+ BAILEYS                                           0             
+ DON JULIO AÑEJO                                   0             
+ 3 GEN. BLANCO                                     0             
+ 3 GEN. REPOSADO                                   0             
+ 3 GEN. AÑEJO                                      0             
+ TEQ 1800 BLANCO                                   0             
+ TEQ 1800 REP                                      0             
+ TEQ 100 AÑOS                                      0             
+ TEQ ORENDAIN 3/4                                  0             
+ TEQ COMPADRE                                      0             
+ TKT 1 1/4                                         372           
+ DEP ENVASE 1/1                                    0             
+ ENVASES                                           165           
+ TKT LIGHT 1/1                                     40            
+ CAGUAMA TKT NR                                    16            
+ TKT LIGHT 1/2                                     443           
+ TKT ROJO 1/2                                      -2            
+ TKT LIGHT 1/4                                     258           
+ TKT BLANCO                                        29125         
+ TKT BCO T AZUL                                    -1            
+ TKT ROJO 16OZ                                     -2            
+ TKT BLANCO 16OZ                                   212           
+ TKT TWIST                                         -30           
+ 15 TKT PROMO                                      -1            
+ TKT BCO 24 OZ                                     0             
+ XX 1/2                                            60            
+ XX AMBAR 1/2                                      0             
+ XX 1/4                                            0             
+ XX LATA                                           69            
+ XX 1 1/4                                          0             
+ KLOSTER 1/1                                       0             
+ ENC CONCHITAS 200G                                0             
+ ENC CHICHOS 200G                                  0             
+ BOHEMIA 1/2                                       0             
+ XX LAGER 1/2 NR                                   152           
+ COORS LATA                                        0             
+ TKT TWIST SIX                                     0             
+ BOHEMIA NR                                        2             
+ PEPSI 600 ML                                      111           
+ PEPSI LTO                                         112           
+ BUD 1/2                                           0             
+ HEINEKEN 1/4 NR                                   312           
+ INDIOCAGUAMON                                     0             
+ HEINEKEN NR                                       0             
+ MILLER LITE 1/1                                   0             
+ MILLER LITE 1/2                                   0             
+ MILLER LITE 24OZ                                  0             
+ MILLER LITE LATA                                  0             
+ MILLER DRAFT 1/2                                  0             
+ MILLER LITE PONY                                  0             
+ MILLER DRAFT 24OZ                                 0             
+ MILLER DRAFT LATA                                 0             
+ MILLER HIGHLIFE 1/                                0             
+ MILLER HIGHLIFE PO                                0             
+ MILLER HIGHLIFE LA                                0             
+ SCHAEFER 1/1                                      0             
+ SCHAEFER LATA                                     0             
+ SHINER BOCK                                       0             
+ HEINEKEN 1/2                                      0             
+ HEINEKEN LATA                                     0             
+ PALOMITAS 6                                       0             
+ BONAFONT 600ML                                    0             
+ AGUAFIEL 1 /12                                    0             
+ PEÑAFIEL 2 LTS                                    0             
+ BONAFONT SABOR  1.                                0             
+ PEPSI KICK                                        0             
+ COCA 355 ML                                       124           
+ BONAFONT SABOR 300                                0             
+ COCA 1/2 NR                                       0             
+ COCA LATA                                         0             
+ COCA 2 LTS R                                      0             
+ COCA 2 LTS NR                                     34            
+  BEBIDAS 600                                      196           
+ COCA 2.5 LTS NR                                   57            
+ ARIZONA                                           41            
+ COCA LIGHT 355ML                                  0             
+ AGUA MINERAL 1.5 L                                9             
+ JUMEX 450ML                                       0             
+ MARLBORO DURO                                     0             
+ MARLBORO                                          150           
+ ENCENDEDOR                                        19            
+ CERILLOS                                          0             
+ CIGARRO SUELTO                                    692           
+ BARAJA OROS                                       0             
+ BARAJA AMERICANA                                  0             
+ DOMINO PLASTICO                                   0             
+ HIELERA 13                                        0             
+ HIELERA MONSTER                                   0             
+ HIELERA 18                                        0             
+ RALEIGH                                           8             
+ VICEROY 100                                       0             
+ FIESTA                                            0             
+ PALLMALL 14´S                                     0             
+ PALLMALL                                          55            
+ ZIG ZAG                                           0             
+ HIELERA METALICA                                  0             
+ BENSON                                            60            
+ DELICADOS                                         0             
+ MARLBORO 100                                      0             
+ CAMEL                                             0             
+ MARLBORO 14                                       67            
+ DELICADOS 20                                      0             
+ DELICADOS 25                                      0             
+ SALSA BOT. 190ML                                  0             
+ BK2 8                                             -1            
+ MR CARNE S                                        0             
+ TOSTADA 25                                        0             
+ TOSTADA 35                                        0             
+ BEBIDA NACIONAL                                   0             
+ SAB FAMILIAR                                      0             
+ SAB CHE TOR 28G                                   0             
+ SAB COMPARTE                                      0             
+ SAB DOR NACH 47G                                  0             
+ SABRITAS VARIEDAD                                 90            
+ SALSA EL PRIMO                                    0             
+ SAB SABRITONES                                    0             
+ NEW MIX PROMO                                     0             
+ TKT LATA                                          2             
+ KARTA BLANCA                                      90            
+ DOS EQUIS LAGER                                   86            
+=================================================================
+                               TOTAL DE PRODUCTOS: 380           
+=================================================================
+                                                                 
+                     ¡GRACIAS POR SU COMPRA!                     
+                  ESPERAMOS SU VISITA NUEVAMENTE                 
+                    NO SE ACEPTAN DEVOLUCIONES                  
+                                                                 
