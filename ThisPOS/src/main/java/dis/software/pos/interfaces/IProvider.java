@@ -8,6 +8,7 @@
 package dis.software.pos.interfaces;
 
 import dis.software.pos.entities.Provider;
+import java.util.List;
 
 /**
  *
@@ -16,4 +17,5 @@ import dis.software.pos.entities.Provider;
 public interface IProvider extends IGenericHibernate<Provider, Long>
 {
     String getNextCode();
+    List<Provider> getDeleted();
 }

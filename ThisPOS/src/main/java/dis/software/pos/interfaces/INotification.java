@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Milton Cavazos
+ * Copyright (C) 2017 Milton Cavazos
  *
  * Este programa es de código libre; usted podrá instalar y/o
  * utilizar una copia del programa de computación en una computadora compatible,
@@ -7,15 +7,13 @@
  */
 package dis.software.pos.interfaces;
 
-import dis.software.pos.entities.Category;
-import java.util.List;
+import dis.software.pos.entities.Notification;
 
 /**
  *
  * @author Milton Cavazos
  */
-public interface ICategory extends IGenericHibernate<Category, Long>
+public interface INotification extends IGenericHibernate<Notification, Long>
 {
-    String getNextCode();
-    List<Category> getDeleted();
+    
 }

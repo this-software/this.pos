@@ -22,4 +22,8 @@ public interface IProduct extends IGenericHibernate<Product, Long>
     List<Product> findByCategory(Category category);
     List<Product> findByProvider(Provider provider);
     List<Product> findBy(Category category, Provider provider);
+    Product findByCode(String code);
+    List<Product> getMinStockLevel();
+    void setMinStockLevelNotified(List<Product> list);
+    List<Product> getDeleted();
 }

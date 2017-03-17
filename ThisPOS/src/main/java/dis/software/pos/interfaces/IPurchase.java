@@ -7,15 +7,16 @@
  */
 package dis.software.pos.interfaces;
 
-import dis.software.pos.entities.Category;
+import dis.software.pos.entities.Purchase;
+import java.util.Calendar;
 import java.util.List;
 
 /**
  *
  * @author Milton Cavazos
  */
-public interface ICategory extends IGenericHibernate<Category, Long>
+public interface IPurchase extends IGenericHibernate<Purchase, Long>
 {
-    String getNextCode();
-    List<Category> getDeleted();
+    List<Purchase> findByDateRange(Calendar initialDate, Calendar finalDate);
+    List<Purchase> getDeleted();
 }

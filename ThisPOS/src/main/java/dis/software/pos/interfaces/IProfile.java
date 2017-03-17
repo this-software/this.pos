@@ -6,6 +6,7 @@
 package dis.software.pos.interfaces;
 
 import dis.software.pos.entities.Profile;
+import java.util.List;
 
 /**
  *
@@ -14,4 +15,6 @@ import dis.software.pos.entities.Profile;
 public interface IProfile extends IGenericHibernate<Profile, Long>
 {
     String getNextCode();
+    List<Profile> getDeleted();
+    @Override List<Profile> findAll();
 }

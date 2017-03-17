@@ -7,15 +7,15 @@
  */
 package dis.software.pos.interfaces;
 
-import dis.software.pos.entities.Category;
+import dis.software.pos.entities.Unit;
 import java.util.List;
 
 /**
  *
  * @author Milton Cavazos
  */
-public interface ICategory extends IGenericHibernate<Category, Long>
+public interface IUnit extends IGenericHibernate<Unit, Long>
 {
     String getNextCode();
-    List<Category> getDeleted();
+    List<Unit> getDeleted();
 }

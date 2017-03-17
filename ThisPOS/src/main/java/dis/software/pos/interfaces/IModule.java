@@ -6,6 +6,7 @@
 package dis.software.pos.interfaces;
 
 import dis.software.pos.entities.Module;
+import java.util.List;
 
 /**
  *
@@ -13,5 +14,6 @@ import dis.software.pos.entities.Module;
  */
 public interface IModule extends IGenericHibernate<Module, Long>
 {
-    
+    @Override
+    List<Module> findAll();
 }

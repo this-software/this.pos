@@ -7,15 +7,17 @@
  */
 package dis.software.pos.interfaces;
 
-import dis.software.pos.entities.Category;
+import dis.software.pos.entities.Sale;
+import java.util.Calendar;
 import java.util.List;
 
 /**
  *
  * @author Milton Cavazos
  */
-public interface ICategory extends IGenericHibernate<Category, Long>
+public interface ISale extends IGenericHibernate<Sale, Long>
 {
-    String getNextCode();
-    List<Category> getDeleted();
+    List<Sale> getDeleted();
+    List<Sale> findByDateRange(Calendar initialDate, Calendar finalDate);
+    Double getDailyCashOutAmount();
 }

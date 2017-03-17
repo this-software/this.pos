@@ -14,6 +14,9 @@ import java.util.List;
  */
 public interface IUser extends IGenericHibernate<User, Long>
 {
+    String getNextCode();
     User getUser(String username);
-    List<User> getUserList();
+    @Override List<User> findAll();
+    List<User> getNotificationReceivers();
+    List<User> getDeleted();
 }

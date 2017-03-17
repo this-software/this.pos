@@ -7,15 +7,14 @@
  */
 package dis.software.pos.interfaces;
 
-import dis.software.pos.entities.Category;
-import java.util.List;
+import dis.software.pos.entities.PromotionProduct;
+import dis.software.pos.entities.PromotionProductPk;
 
 /**
  *
  * @author Milton Cavazos
  */
-public interface ICategory extends IGenericHibernate<Category, Long>
+public interface IPromotionProduct extends IGenericHibernate<PromotionProduct, PromotionProductPk>
 {
-    String getNextCode();
-    List<Category> getDeleted();
+    
 }

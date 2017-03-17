@@ -9,6 +9,7 @@ package dis.software.pos.interfaces;
 
 import dis.software.pos.InventoryType;
 import dis.software.pos.entities.Inventory;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -18,5 +19,12 @@ import java.util.List;
 public interface IInventory extends IGenericHibernate<Inventory, Long>
 {
     String getNextCode();
+    List<Inventory> getDeleted();
     List<Inventory> findByInventoryType(InventoryType inventoryType);
+    @Override List<Inventory> findAll();
+    List<Inventory> findByInventoryTypeAndDate(
+        InventoryType inventoryType, Calendar initialDate, Calendar finalDate);
+    List<Inventory> findIncomesByDate(Calendar initialDate, Calendar finalDate);
+    List<Inventory> findOutcomesByDate(Calendar initialDate, Calendar finalDate);
+    Boolean isLast(Inventory inventory);
 }

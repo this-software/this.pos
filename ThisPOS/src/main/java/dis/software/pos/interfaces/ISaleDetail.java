@@ -7,15 +7,16 @@
  */
 package dis.software.pos.interfaces;
 
-import dis.software.pos.entities.Category;
+import dis.software.pos.entities.Sale;
+import dis.software.pos.entities.SaleDetail;
+import dis.software.pos.entities.SaleDetailPk;
 import java.util.List;
 
 /**
  *
  * @author Milton Cavazos
  */
-public interface ICategory extends IGenericHibernate<Category, Long>
+public interface ISaleDetail extends IGenericHibernate<SaleDetail, SaleDetailPk>
 {
-    String getNextCode();
-    List<Category> getDeleted();
+    List<SaleDetail> findBySale(Sale sale);
 }

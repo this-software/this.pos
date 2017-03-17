@@ -16,6 +16,7 @@ import java.util.List;
  */
 public interface IGenericHibernate<T, Id extends Serializable>
 {
+    void clear();
     void commit();
     void flush();
     T findById(Id id);
@@ -24,7 +25,8 @@ public interface IGenericHibernate<T, Id extends Serializable>
     T save(T entity);
     void saveOrUpdate(T entity);
     void update(T entity);
+    void updateAll(List<T> list);
     void delete(T entity);
-    void deleteAll();
+    void deleteAll(List<T> list);
     Object executeQuery(String query);
 }

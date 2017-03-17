@@ -10,6 +10,7 @@ package dis.software.pos.interfaces;
 import dis.software.pos.entities.Inventory;
 import dis.software.pos.entities.InventoryProduct;
 import dis.software.pos.entities.InventoryProductPk;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -18,5 +19,7 @@ import java.util.List;
  */
 public interface IInventoryProduct extends IGenericHibernate<InventoryProduct, InventoryProductPk>
 {
+    void lockAll(List<InventoryProduct> list);
     List<InventoryProduct> findByInventory(Inventory inventory);
+    List<InventoryProduct> findByDate(Calendar initialDate, Calendar finalDate);
 }
