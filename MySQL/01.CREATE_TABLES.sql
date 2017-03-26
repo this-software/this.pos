@@ -161,7 +161,20 @@ CREATE TABLE `provider` (
 
 CREATE TABLE `store` (
 	`id` INT NOT NULL AUTO_INCREMENT,
-	`code` VARCHAR(50) NOT NULL -- UNI001
+	`code` VARCHAR(10) NOT NULL, -- UNI001
+	`name` VARCHAR(50) NOT NULL,
+	`description` VARCHAR(100) NULL,
+    `tax` DOUBLE(4,2) NOT NULL,
+    `out_of_time` TIME NULL,
+    `deleted` BIT NOT NULL DEFAULT 0,
+	`created_by` INT NOT NULL,
+	`created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`updated_by` INT NULL,
+	`updated_date` DATETIME NULL,
+    CONSTRAINT pk_store PRIMARY KEY (`id`),
+	CONSTRAINT uq_store_code UNIQUE (`code`),
+    CONSTRAINT fk_store_cby_user_id FOREIGN KEY (`created_by`) REFERENCES `user`(`id`),
+    CONSTRAINT fk_store_uby_user_id FOREIGN KEY (`updated_by`) REFERENCES `user`(`id`)
 );
 -- http:// ?code=UNI001
 
@@ -188,11 +201,13 @@ CREATE TABLE `product` (
     `discount_expiration_date` DATETIME NULL,
     `category_id` INT NOT NULL,
     `provider_id` INT NOT NULL,
+    `unit_id` INT NOT NULL,
 	CONSTRAINT pk_product_id PRIMARY KEY (`id`),
 	CONSTRAINT uq_product_code UNIQUE (`code`),
 	CONSTRAINT uq_product_name UNIQUE (`name`),
     CONSTRAINT fk_product_cid_category_id FOREIGN KEY (`category_id`) REFERENCES `category`(`id`),
-    CONSTRAINT fk_product_pid_provider_id FOREIGN KEY (`provider_id`) REFERENCES `provider`(`id`)
+    CONSTRAINT fk_product_pid_provider_id FOREIGN KEY (`provider_id`) REFERENCES `provider`(`id`),
+    CONSTRAINT fk_product_uid_unit_id FOREIGN KEY (`unit_id`) REFERENCES `unit`(`id`)
 );
 
 
@@ -312,16 +327,16 @@ CREATE TABLE `sale` (
 
 CREATE TABLE `sale_detail` (
 	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	`sale_id` INT NOT NULL,
-    `product_id` INT NOT NULL,
-    `unit_id` INT NOT NULL, -- TODO: ES NECESARIO SABER EN QUE UNIDAD SE VENDIO AUN QUE SIEMPRE SEA EN PIEZAS
-	`price` DOUBLE(8,2) NOT NULL,
-    `discount` DOUBLE(8,2) NOT NULL,
-    `total_discount` DOUBLE(8,2) NOT NULL,
-    `amount` DOUBLE(8,2) NOT NULL,
-	`cost` DOUBLE(8,2) NOT NULL,
-    `total_cost` DOUBLE(8,2) NOT NULL,
-	`quantity` INT NOT NULL, -- TODO: CAMBIAR NOMBRE A "UNITS"
+	`sale_id` INT NOT NULL, -- VENTA
+    `product_id` INT NOT NULL, -- PRODUCTO VENDIDO
+    `unit_id` INT NOT NULL, -- UNIDAD VENDIDA
+	`price` DOUBLE(8,2) NOT NULL, -- PRECIO DE PRODUCTO
+    `discount` DOUBLE(8,2) NOT NULL, -- DESCUENTO DE PRODUCTO
+    `total_discount` DOUBLE(8,2) NOT NULL, -- DESCUENTO TOTAL (DESCUENTO DE PRODUCTO x UNIDADES)
+    `amount` DOUBLE(8,2) NOT NULL, -- MONTO TOTAL (PRECIO DE PRODUCTO x UNIDADES)
+	`cost` DOUBLE(8,2) NOT NULL, -- COSTO DE PRODUCTO
+    `total_cost` DOUBLE(8,2) NOT NULL, -- COSTO TOTAL (COSTO DE PRODUCTO x UNIDADES)
+	`units` INT NOT NULL, -- UNIDADES VENDIDAS
     `deleted` BIT NOT NULL DEFAULT 0,
 	`created_by` INT NOT NULL,
 	`created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -330,19 +345,21 @@ CREATE TABLE `sale_detail` (
     CONSTRAINT pk_sd_id PRIMARY KEY (`id`),
     CONSTRAINT fk_sd_sid_sale_id FOREIGN KEY (`sale_id`) REFERENCES `sale`(`id`),
     CONSTRAINT fk_sd_pid_product_id FOREIGN KEY (`product_id`) REFERENCES `product`(`id`),
-    CONSTRAINT fk_sd_cby_user_id FOREIGN KEY (`created_by`) REFERENCES `user`(`id`)
+    CONSTRAINT fk_sd_uid_unit_id FOREIGN KEY (`unit_id`) REFERENCES `unit`(`id`),
+    CONSTRAINT fk_sd_cby_user_id FOREIGN KEY (`created_by`) REFERENCES `user`(`id`),
+    CONSTRAINT fk_sd_uby_user_id FOREIGN KEY (`updated_by`) REFERENCES `user`(`id`)
 );
 
 
 CREATE TABLE `sale_promotion_detail` (
 	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	`sale_id` INT NOT NULL,
-    `promotion_id` INT NOT NULL,
-	`price` DOUBLE(8,2) NOT NULL,
-    `amount` DOUBLE(8,2) NOT NULL,
-	`cost` DOUBLE(8,2) NOT NULL,
-    `total_cost` DOUBLE(8,2) NOT NULL,
-	`quantity` INT NOT NULL,
+	`sale_id` INT NOT NULL, -- VENTA
+    `promotion_id` INT NOT NULL, -- PROMOCION VENDIDA
+	`price` DOUBLE(8,2) NOT NULL, -- PRECIO DE PROMOCION
+    `amount` DOUBLE(8,2) NOT NULL, -- MONTO TOTAL (PRECIO DE PROMOCION x UNIDADES)
+	`cost` DOUBLE(8,2) NOT NULL, -- COSTO DE PROMOCION
+    `total_cost` DOUBLE(8,2) NOT NULL, -- COSTO TOTAL (COSTO DE PROMOCION x UNIDADES)
+	`units` INT NOT NULL, -- UNIDADES VENDIDAS
     `deleted` BIT NOT NULL DEFAULT 0,
 	`created_by` INT NOT NULL,
 	`created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -433,12 +450,12 @@ CREATE TABLE `purchase` (
 
 
 CREATE TABLE `purchase_detail` (
-	`purchase_id` INT NOT NULL,
+	`purchase_id` INT NOT NULL, -- COMPRA
     `product_id` INT NOT NULL, -- PRODUCTO COMPRADO
     `unit_id` INT NOT NULL, -- UNIDAD COMPRADA
 	`cost` DOUBLE(8,2) NOT NULL, -- COSTO DE UNIDAD
-	`quantity` INT NOT NULL, -- CANTIDAD DE UNIDADES
-    `total_cost` DOUBLE(8,2) NOT NULL, -- COSTO TOTAL (COSTO DE UNIDAD x CANTIDAD)
+	`units` INT NOT NULL, -- UNIDADES COMPRADAS
+    `total_cost` DOUBLE(8,2) NOT NULL, -- COSTO TOTAL (COSTO DE UNIDAD x UNIDADES)
     `deleted` BIT NOT NULL DEFAULT 0,
 	`created_by` INT NOT NULL,
 	`created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
